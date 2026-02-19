@@ -827,12 +827,32 @@
 
       /* Gallery */
       .masonry {
-        display: grid;
-        grid-template-columns: repeat(12, 1fr);
+        display: flex;
         gap: 12px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 8px;
+      }
+      .masonry::-webkit-scrollbar {
+        height: 6px;
+      }
+      .masonry::-webkit-scrollbar-track {
+        background: rgba(124, 77, 255, 0.08);
+        border-radius: 10px;
+      }
+      .masonry::-webkit-scrollbar-thumb {
+        background: rgba(124, 77, 255, 0.3);
+        border-radius: 10px;
+      }
+      .masonry::-webkit-scrollbar-thumb:hover {
+        background: rgba(124, 77, 255, 0.5);
       }
       .tile {
-        grid-column: span 4;
+        min-width: 280px;
+        height: 200px;
+        flex: 0 0 auto;
         border-radius: 18px;
         overflow: hidden;
         border: 1px solid rgba(124, 77, 255, 0.14);
@@ -841,7 +861,6 @@
           0 4px 32px rgba(124, 77, 255, 0.08),
           0 12px 60px rgba(124, 77, 255, 0.06);
         position: relative;
-        min-height: 190px;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         backdrop-filter: blur(8px);
       }
@@ -852,6 +871,19 @@
           0 16px 80px rgba(124, 77, 255, 0.1);
         border-color: rgba(124, 77, 255, 0.24);
       }
+
+      .gallery-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .gallery-btns {
+        display: flex;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+
       .tile img {
         width: 100%;
         height: 100%;
@@ -1142,6 +1174,17 @@
         .grid {
           gap: 12px;
         }
+        .tile {
+          min-width: 220px;
+          height: 160px;
+        }
+        .tile .cap {
+          font-size: 11px;
+          padding: 6px 8px;
+        }
+        .gallery-wrapper {
+          gap: 8px;
+        }
       }
 
       /* Extra Small Mobile */
@@ -1301,8 +1344,8 @@
           border-radius: 8px;
         }
         .tile {
-          grid-column: span 12;
-          min-height: 140px;
+          min-width: 200px;
+          height: 150px;
           border-radius: 14px;
         }
         .tile .cap {
@@ -1581,6 +1624,18 @@
         .logo {
           width: 28px;
           height: 28px;
+        }
+        .tile {
+          min-width: 180px;
+          height: 140px;
+        }
+        .tile .cap {
+          font-size: 10px;
+          padding: 5px 7px;
+        }
+        .gallery-btns {
+          flex-direction: column;
+          gap: 6px;
         }
         footer {
           padding: 16px 0 24px;
@@ -1866,31 +1921,37 @@
         <span class="tag">Gallery</span>
       </div>
 
-      <div class="masonry" id="gallery">
-        <!-- example tile (replace src with your photo) -->
-        <div class="tile">
-          <img src="public/fm.jpeg" alt="Gallery 1" />
-          <div class="cap">First Meet</div>
+      <div class="gallery-wrapper">
+        <div class="masonry" id="gallery">
+          <!-- example tile (replace src with your photo) -->
+          <div class="tile">
+            <img src="public/fm.jpeg" alt="Gallery 1" />
+            <div class="cap">First Meet</div>
+          </div>
+          <div class="tile">
+            <img src="public/allfm.jpeg" alt="Gallery 2" />
+            <div class="cap">All First Meet</div>
+          </div>
+          <div class="tile">
+            <img src="public/allMembers.jpeg" alt="Gallery 3" />
+            <div class="cap">All Members Class</div>
+          </div>
+          <div class="tile">
+            <img src="public/boy.jpeg" alt="Gallery 4" />
+            <div class="cap">Boy</div>
+          </div>
+          <div class="tile">
+            <img src="public/girl.jpeg" alt="Gallery 5" />
+            <div class="cap">Girl</div>
+          </div>
+          <div class="tile">
+            <img src="public/villa.jpeg" alt="Gallery 6" />
+            <div class="cap">Healing To Villa</div>
+          </div>
         </div>
-        <div class="tile">
-          <img src="public/allfm.jpeg" alt="Gallery 2" />
-          <div class="cap">All First Meet</div>
-        </div>
-        <div class="tile">
-          <img src="public/allMembers.jpeg" alt="Gallery 3" />
-          <div class="cap">All Members Class</div>
-        </div>
-        <div class="tile">
-          <img src="public/boy.jpeg" alt="Gallery 4" />
-          <div class="cap">Boy</div>
-        </div>
-        <div class="tile">
-          <img src="public/girl.jpeg" alt="Gallery 5" />
-          <div class="cap">Girl</div>
-        </div>
-        <div class="tile">
-          <img src="public/villa.jpeg" alt="Gallery 6" />
-          <div class="cap">Healing To Villa</div>
+        <div class="gallery-btns">
+          <button class="icon-btn" id="galleryPrevBtn" aria-label="Previous">←</button>
+          <button class="icon-btn" id="galleryNextBtn" aria-label="Next">→</button>
         </div>
       </div>
     </section>
@@ -1921,8 +1982,8 @@
           <h4>Follow our social media</h4>
           <div class="desc">
             Instagram: <b>@sisteminformasi.rg</b><br />
-            Github: <b>@rgclass25</b>
-            Youtube: <b>rg class system information</b><br />
+            Github: <b>@rgclass25</b><br />
+            Youtube: <b>RG class system information</b><br />
           </div>
         </div>
       </div>
@@ -2053,6 +2114,45 @@
         );
         render(filtered);
       });
+
+      // Gallery swipe and buttons
+      const gallery = document.getElementById("gallery");
+      if (gallery) {
+        document.getElementById("galleryNextBtn").addEventListener("click", () => {
+          gallery.scrollBy({ left: 300, behavior: "smooth" });
+        });
+        document.getElementById("galleryPrevBtn").addEventListener("click", () => {
+          gallery.scrollBy({ left: -300, behavior: "smooth" });
+        });
+
+        // Touch swipe for gallery
+        let galleryTouchStartX = 0;
+        let galleryTouchEndX = 0;
+        
+        gallery.addEventListener("touchstart", (e) => {
+          galleryTouchStartX = e.changedTouches[0].screenX;
+        }, false);
+        
+        gallery.addEventListener("touchend", (e) => {
+          galleryTouchEndX = e.changedTouches[0].screenX;
+          galleryHandleSwipe();
+        }, false);
+        
+        function galleryHandleSwipe() {
+          const swipeThreshold = 50;
+          const diff = galleryTouchStartX - galleryTouchEndX;
+          
+          if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0) {
+              // Swipe left - scroll right
+              gallery.scrollBy({ left: 300, behavior: "smooth" });
+            } else {
+              // Swipe right - scroll left
+              gallery.scrollBy({ left: -300, behavior: "smooth" });
+            }
+          }
+        }
+      }
 
       // Footer year
       document.getElementById("year").textContent = new Date().getFullYear();
