@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Class Website | RG CLASS</title>
+
+    <!-- Fonts (aesthetic) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg1: #ffffff;
+        --bg2: #f8f2ff;
+        --purple1: #b57bff;
+        --purple2: #7c4dff;
+        --purple3: #e7d7ff;
+        --text: #1d1630;
+        --muted: #5a4f78;
+        --card: rgba(255, 255, 255, 0.62);
+        --stroke: rgba(124, 77, 255, 0.18);
+        --shadow: 0 18px 60px rgba(124, 77, 255, 0.14);
+        --radius: 20px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        color: var(--text);
+        font-family: "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI,
+          Roboto, Arial, sans-serif;
+        background: radial-gradient(
+            1200px 600px at 10% 10%,
+            rgba(181, 123, 255, 0.22),
+            transparent 55%
+          ),
+          radial-gradient(
+            900px 500px at 90% 20%,
+            rgba(124, 77, 255, 0.18),
+            transparent 55%
+          ),
+          linear-gradient(135deg, var(--bg1), var(--bg2) 55%, #ffffff);
+        overflow-x: hidden;
+      }
+
+      /* subtle floating blobs */
+      .blob {
+        position: absolute;
+        inset: auto;
+        width: 520px;
+        height: 520px;
+        background: radial-gradient(
+          circle at 30% 30%,
+          rgba(181, 123, 255, 0.45),
+          rgba(124, 77, 255, 0.05) 62%,
+          transparent 70%
+        );
+        filter: blur(10px);
+        opacity: 0.85;
+        pointer-events: none;
+        animation: floaty 9s ease-in-out infinite;
+      }
+      .blob.b1 {
+        top: -180px;
+        left: -160px;
+      }
+      .blob.b2 {
+        top: 120px;
+        right: -240px;
+        width: 620px;
+        height: 620px;
+        animation-duration: 11s;
+      }
+      @keyframes floaty {
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+        50% {
+          transform: translate(16px, 18px) scale(1.02);
+        }
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .container {
+        width: min(1140px, 92vw);
+        margin: 0 auto;
+      }
+
+      /* Nav */
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        backdrop-filter: blur(12px);
+        background: rgba(255, 255, 255, 0.55);
+        border-bottom: 1px solid rgba(124, 77, 255, 0.1);
+      }
+      .nav-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 0;
+        gap: 14px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Space Grotesk", sans-serif;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+      }
+      .logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--purple1), var(--purple2));
+        box-shadow: 0 14px 40px rgba(124, 77, 255, 0.25);
+        position: relative;
+      }
+      .logo:after {
+        content: "";
+        position: absolute;
+        inset: 10px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.22);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+      }
+      .brand small {
+        display: block;
+        font-weight: 600;
+        color: var(--muted);
+        font-family: "Plus Jakarta Sans", sans-serif;
+        letter-spacing: 0;
+        margin-top: 1px;
+      }
+      .links {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+      .links a {
+        font-weight: 600;
+        color: var(--muted);
+        padding: 10px 12px;
+        border-radius: 14px;
+        border: 1px solid transparent;
+        transition: 0.2s ease;
+      }
+      .links a:hover {
+        color: var(--text);
+        border-color: rgba(124, 77, 255, 0.14);
+        background: rgba(255, 255, 255, 0.55);
+      }
+      .cta {
+        padding: 10px 14px;
+        border-radius: 14px;
+        background: linear-gradient(
+          135deg,
+          rgba(181, 123, 255, 0.95),
+          rgba(124, 77, 255, 0.95)
+        );
+        color: white;
+        font-weight: 700;
+        box-shadow: 0 16px 48px rgba(124, 77, 255, 0.28);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+      }
+      .cta:hover {
+        filter: brightness(1.03);
+      }
+
+      /* Hero */
+      header {
+        padding: 56px 0 28px;
+        position: relative;
+      }
+      .hero {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 22px;
+        align-items: stretch;
+      }
+      .hero-card {
+        background: var(--card);
+        border: 1px solid var(--stroke);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 26px;
+        position: relative;
+        overflow: hidden;
+      }
+      .hero-card:before {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        background: radial-gradient(
+            650px 180px at 20% 0%,
+            rgba(181, 123, 255, 0.22),
+            transparent 60%
+          ),
+          radial-gradient(
+            650px 220px at 90% 0%,
+            rgba(124, 77, 255, 0.18),
+            transparent 65%
+          );
+        pointer-events: none;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(124, 77, 255, 0.18);
+        background: rgba(255, 255, 255, 0.55);
+        color: var(--muted);
+        font-weight: 700;
+        font-size: 13px;
+        position: relative;
+        z-index: 1;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 99px;
+        background: linear-gradient(135deg, var(--purple1), var(--purple2));
+        box-shadow: 0 6px 22px rgba(124, 77, 255, 0.3);
+      }
+      h1 {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(30px, 4vw, 46px);
+        line-height: 1.06;
+        margin: 16px 0 10px;
+        position: relative;
+        z-index: 1;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 15.5px;
+        line-height: 1.75;
+        position: relative;
+        z-index: 1;
+      }
+      .hero-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 18px;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 1;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 12px 14px;
+        border-radius: 16px;
+        border: 1px solid rgba(124, 77, 255, 0.18);
+        background: rgba(255, 255, 255, 0.55);
+        font-weight: 800;
+        color: var(--text);
+        transition: 0.2s ease;
+        cursor: pointer;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+      .btn.primary {
+        border-color: rgba(255, 255, 255, 0.18);
+        background: linear-gradient(
+          135deg,
+          rgba(181, 123, 255, 0.95),
+          rgba(124, 77, 255, 0.95)
+        );
+        color: white;
+        box-shadow: 0 16px 46px rgba(124, 77, 255, 0.28);
+      }
+
+      .hero-side {
+        display: grid;
+        gap: 14px;
+      }
+      .mini {
+        background: var(--card);
+        border: 1px solid var(--stroke);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 18px;
+        overflow: hidden;
+        position: relative;
+      }
+      .mini h3 {
+        margin: 0 0 8px;
+        font-family: "Space Grotesk", sans-serif;
+        letter-spacing: 0.2px;
+      }
+      .mini p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+        font-size: 14px;
+      }
+      .mini .kpi {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .pill {
+        padding: 10px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.55);
+        border: 1px solid rgba(124, 77, 255, 0.14);
+      }
+      .pill strong {
+        display: block;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 18px;
+      }
+      .pill span {
+        color: var(--muted);
+        font-size: 12.5px;
+        font-weight: 700;
+      }
+
+      /* Sections */
+      section {
+        padding: 22px 0;
+      }
+      .section-title {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .section-title h2 {
+        margin: 0;
+        font-family: "Space Grotesk", sans-serif;
+        letter-spacing: 0.2px;
+        font-size: 24px;
+      }
+      .section-title p {
+        margin: 0;
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 13.5px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 14px;
+      }
+      .card {
+        grid-column: span 4;
+        background: var(--card);
+        border: 1px solid var(--stroke);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 16px;
+      }
+      .card h4 {
+        margin: 0 0 8px;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 18px;
+      }
+      .card .role {
+        color: var(--muted);
+        font-weight: 800;
+        font-size: 12.5px;
+        letter-spacing: 0.2px;
+      }
+      .card .name {
+        margin-top: 6px;
+        font-weight: 800;
+      }
+      .card .desc {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 13.5px;
+        line-height: 1.65;
+      }
+
+      /* Schedule table */
+      .table-wrap {
+        background: var(--card);
+        border: 1px solid var(--stroke);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+      thead {
+        background: linear-gradient(
+          135deg,
+          rgba(181, 123, 255, 0.22),
+          rgba(124, 77, 255, 0.12)
+        );
+      }
+      th,
+      td {
+        padding: 12px 14px;
+        border-bottom: 1px solid rgba(124, 77, 255, 0.12);
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        font-family: "Space Grotesk", sans-serif;
+        letter-spacing: 0.2px;
+        font-size: 13.5px;
+      }
+      tbody tr:hover {
+        background: rgba(255, 255, 255, 0.4);
+      }
+      .tag {
+        display: inline-flex;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.6);
+        border: 1px solid rgba(124, 77, 255, 0.14);
+        font-weight: 800;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      /* Slider */
+      .slider {
+        background: var(--card);
+        border: 1px solid var(--stroke);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 14px;
+      }
+      .slider-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .slider-top .left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .search {
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.55);
+        border: 1px solid rgba(124, 77, 255, 0.14);
+        border-radius: 14px;
+        padding: 10px 12px;
+        gap: 10px;
+        min-width: 240px;
+      }
+      .search input {
+        border: none;
+        outline: none;
+        background: transparent;
+        width: 100%;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .slider-btns {
+        display: flex;
+        gap: 8px;
+      }
+      .icon-btn {
+        padding: 10px 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(124, 77, 255, 0.14);
+        background: rgba(255, 255, 255, 0.55);
+        cursor: pointer;
+        font-weight: 900;
+      }
+      .icon-btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .track {
+        display: flex;
+        gap: 12px;
+        overflow: hidden;
+        scroll-behavior: smooth;
+      }
+      .student {
+        min-width: 122px;
+        background: rgba(255, 255, 255, 0.58);
+        border: 1px solid rgba(124, 77, 255, 0.14);
+        border-radius: 14px;
+        padding: 8px;
+        flex: 0 0 auto;
+      }
+      .photo {
+        width: 104px;
+        height: 120px;
+        margin: 0 auto;
+        border-radius: 12px;
+        border: 1px solid rgba(124, 77, 255, 0.12);
+        overflow: hidden;
+        background: linear-gradient(
+          135deg,
+          rgba(181, 123, 255, 0.18),
+          rgba(255, 255, 255, 0.55)
+        );
+      }
+      .photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .student .meta {
+        margin-top: 8px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 6px;
+      }
+      .student .meta strong {
+        display: block;
+        font-size: 11px;
+      }
+      .student .meta small {
+        color: var(--muted);
+        font-weight: 800;
+        font-size: 10px;
+      }
+      .num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 10px;
+        background: linear-gradient(
+          135deg,
+          rgba(181, 123, 255, 0.95),
+          rgba(124, 77, 255, 0.95)
+        );
+        color: white;
+        font-family: "Space Grotesk", sans-serif;
+        font-weight: 700;
+        font-size: 11px;
+        box-shadow: 0 12px 32px rgba(124, 77, 255, 0.22);
+      }
+      .hint {
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      /* Gallery */
+      .masonry {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 12px;
+      }
+      .tile {
+        grid-column: span 4;
+        border-radius: 18px;
+        overflow: hidden;
+        border: 1px solid rgba(124, 77, 255, 0.14);
+        background: rgba(255, 255, 255, 0.55);
+        box-shadow: var(--shadow);
+        position: relative;
+        min-height: 190px;
+      }
+      .tile img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        filter: saturate(1.02);
+      }
+      .tile .cap {
+        position: absolute;
+        left: 10px;
+        bottom: 10px;
+        padding: 8px 10px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.65);
+        border: 1px solid rgba(124, 77, 255, 0.14);
+        font-weight: 800;
+        font-size: 12.5px;
+        color: var(--text);
+        backdrop-filter: blur(10px);
+      }
+
+      /* Footer */
+      footer {
+        padding: 28px 0 40px;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .footer-card {
+        background: rgba(255, 255, 255, 0.55);
+        border: 1px solid rgba(124, 77, 255, 0.14);
+        border-radius: var(--radius);
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      /* Responsive */
+      @media (max-width: 980px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+        .card {
+          grid-column: span 6;
+        }
+        .tile {
+          grid-column: span 6;
+        }
+      }
+      @media (max-width: 640px) {
+        .links {
+          display: none;
+        }
+        .card {
+          grid-column: span 12;
+        }
+        .tile {
+          grid-column: span 12;
+        }
+        .student {
+          min-width: 44vw;
+        }
+        .search {
+          min-width: 0;
+          width: 100%;
+        }
+        .slider-top {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .slider-btns {
+          justify-content: flex-end;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+
+    <!-- NAV -->
+    <nav class="nav">
+      <div class="container nav-inner">
+        <div class="brand">
+          <div class="logo" aria-hidden="true"></div>
+          <div>
+            RG CLASS
+            <small>Information Systems</small>
+          </div>
+        </div>
+
+        <div class="links">
+          <a href="#about">Description</a>
+          <a href="#struktur">Structure</a>
+          <a href="#mahasiswa">Students</a>
+          <a href="#jadwal">Schedule</a>
+          <a href="#galeri">Gallery</a>
+          <a class="cta" href="#contact">Contact</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="container">
+      <div class="hero">
+        <div class="hero-card">
+          <div class="badge"><span class="dot"></span> SISTEM INFORMASI</div>
+          <h1>Welcome to Our Class ✦<br /></h1>
+          <p class="sub">
+            One class, one system, one future.<br />Coding & system
+            collab with bussines.<br />Creating, debugging, and evolving.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn primary" href="#mahasiswa">View Students</a>
+            <a class="btn" href="#struktur">Management Structure</a>
+            <a class="btn" href="#jadwal">Schedule</a>
+          </div>
+        </div>
+
+        <div class="hero-side">
+          <div class="mini">
+            <h3>Member</h3>
+            <p>Our information member</p>
+            <div class="kpi">
+              <div class="pill"><strong>41</strong><span>Students</span></div>
+              <div class="pill"><strong>24</strong><span>Boy</span></div>
+              <div class="pill"><strong>17</strong><span>Girl</span></div>
+            </div>
+          </div>
+          <div class="mini">
+            <h3>Our?</h3>
+            <p>just a bunch of NPC students.</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section id="about" class="container">
+      <div class="section-title">
+        <div>
+          <h2>Class Description</h2>
+          <p>Short Description</p>
+        </div>
+        <span class="tag">#LightPurple #Aesthetic</span>
+      </div>
+
+      <div class="grid">
+        <div class="card" style="grid-column: span 7">
+          <h4>Profile</h4>
+          <div class="role">About Class</div>
+          <div class="desc">
+            The Information Systems Class is a student community focused on
+            technology, programming, and digital business. We learn to design
+            and build systems as solutions for the future, combining logic,
+            innovation, and business.
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: span 5">
+          <h4>Important Info</h4>
+          <div class="desc">
+            • Campus: <b>Indraprasta University</b>
+            <br>• Academic Advisor: <b>Sophan Sofian</b>
+            <br>• Class type: <b>Regular</b>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STRUCTURE -->
+    <section id="struktur" class="container">
+      <div class="section-title">
+        <div>
+          <h2>Management Structure</h2>
+          <p>Replace these names with your class management team.</p>
+        </div>
+        <span class="tag">Management</span>
+      </div>
+
+      <div class="grid" id="strukturGrid">
+        <!-- example -->
+        <div class="card">
+          <h4>Class President</h4>
+          <div class="role">Leadership</div>
+          <div class="name">Ardita Putri Maharani</div>
+          <div class="desc">
+            Communicates with lecturers, and leads
+            decisions.
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>Vice President</h4>
+          <div class="role">Support</div>
+          <div class="name">Ilham Ramadani</div>
+          <div class="desc">
+            Supports the president and steps in when the president is
+            unavailable and Organizing the class. 
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>Secretary</h4>
+          <div class="role">Administration</div>
+          <div class="name">Mutiara Aulia Rahma</div>
+          <div class="desc">
+            Handles meeting notes, documentation, correspondence, and records.
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>Treasurer</h4>
+          <div class="role">Finance</div>
+          <div class="name">Widayu Fitri Salim</div>
+          <div class="desc">Manages class funds and financial reports.</div>
+        </div>
+
+        <div class="card">
+          <h4>Academic Coordinator</h4>
+          <div class="role">Coordinator</div>
+          <div class="name">Aditya Ardiyansyah</div>
+          <div class="desc">
+            Coordinates activities.
+          </div>
+        </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- STUDENT SLIDER -->
+    <section id="mahasiswa" class="container">
+      <div class="section-title">
+        <div>
+          <h2>Photos of students</h2>
+          <p>Search student</p>
+        </div>
+        <span class="tag">Student photos</span>
+      </div>
+
+      <div class="slider">
+        <div class="slider-top">
+          <div class="left">
+            <div class="search">
+              🔎
+              <input
+                id="searchName"
+                type="text"
+                placeholder="Search student name..."
+              />
+            </div>
+            <span class="tag" id="countLabel">41 Students</span>
+          </div>
+
+          <div class="slider-btns">
+            <button class="icon-btn" id="prevBtn" aria-label="Previous">
+              ←
+            </button>
+            <button class="icon-btn" id="nextBtn" aria-label="Next">→</button>
+          </div>
+        </div>
+
+        <div class="track" id="track"></div>
+        <div class="hint">
+        </div>
+      </div>
+    </section>
+
+    <!-- SCHEDULE -->
+    <section id="jadwal" class="container">
+      <div class="section-title">
+        <div>
+          <h2>Schedule</h2>
+        </div>
+        <span class="tag">Schedule</span>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th>Course</th>
+              <th>Time</th>
+              <th>Room</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Monday</td>
+              <td>Agama Islam </td>
+              <td>12:00 - 13:40</td>
+              <td>4.4-1</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>Bahasa Indonesia</td>
+              <td>13:40 - 15:20</td>
+              <td>4.4-1</td>
+            </tr>
+            <tr>
+              <td>Wednesday</td>
+              <td>Konsep Sisfor</td>
+              <td>07:00 - 09:30</td>
+              <td>4.4-1</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>Algoritma</td>
+              <td>09:30 - 12:00</td>
+              <td>4.4-1</td>
+            </tr>
+            <tr>
+              <td>Thursday</td>
+              <td>Matematika</td>
+              <td>08:40 - 10:20</td>
+              <td>4.4-1</td>
+            </tr>
+             <tr>
+              <td></td>
+              <td>Pancasila</td>
+              <td>10:20 - 12:00</td>
+              <td>4.4-1</td>
+            </tr>
+            <tr>
+              <td>Friday</td>
+              <td>Pemrograman</td>
+              <td>07:30 - 09:10</td>
+              <td>4.4-4</td>
+            </tr>
+             <tr>
+              <td></td>
+              <td>Bahasa Inggris</td>
+              <td>09:10 - 10:50</td>
+              <td>4.4-4</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section id="galeri" class="container">
+      <div class="section-title">
+        <div>
+          <h2>Photo Gallery</h2>
+          <p>
+            Class activity documentation
+          </p>
+        </div>
+        <span class="tag">Gallery</span>
+      </div>
+
+      <div class="masonry" id="gallery">
+        <!-- example tile (replace src with your photo) -->
+        <div class="tile">
+          <img src="assets/galeri/1.jpg" alt="Gallery 1" />
+          <div class="cap">First Meet</div>
+        </div>
+        <div class="tile">
+          <img src="assets/galeri/2.jpg" alt="Gallery 2" />
+          <div class="cap">All First Meet</div>
+        </div>
+        <div class="tile">
+          <img src="assets/galeri/3.jpg" alt="Gallery 3" />
+          <div class="cap">All Members Class</div>
+        </div>
+        <div class="tile">
+          <img src="assets/galeri/4.jpg" alt="Gallery 4" />
+          <div class="cap">Boy</div>
+        </div>
+        <div class="tile">
+          <img src="assets/galeri/5.jpg" alt="Gallery 5" />
+          <div class="cap">Girl</div>
+        </div>
+        <div class="tile">
+          <img src="assets/galeri/6.jpg" alt="Gallery 6" />
+          <div class="cap">Healing To Villa</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OTHERS -->
+    <section id="contact" class="container">
+      <div class="section-title">
+        <div>
+          <h2>Other Information</h2>
+          <p>Rules and management contacts.</p>
+        </div>
+        <span class="tag">Info</span>
+      </div>
+
+      <div class="grid">
+        <div class="card" style="grid-column: span 6">
+          <h4>Class Rules</h4>
+          <div class="desc">
+            1) Solidarity<br />
+            2) Respect Everyone<br />
+            3) Stay Responsible<br />
+            4) Grow Together<br />
+            5) No Drama
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: span 6">
+          <h4>Management Contacts</h4>
+          <div class="desc">
+            President: <b>08xx-xxxx-xxxx</b><br />
+            Vice: <b>08xx-xxxx-xxxx</b><br />
+            Treasurer: <b>08xx-xxxx-xxxx</b><br />
+            Class Instagram: <b>@insert_username</b>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="container">
+      <div class="footer-card">
+        <div><span id=""></span> © 2025 by ilham All rights reserved.</div>
+        <div class="tag">Purple Gradient Theme</div>
+      </div>
+    </footer>
+
+    <script>
+      // ========= STUDENT DATA (TOTAL 41) =========
+      // Edit names and photo paths directly below:
+      // - Change "Student XX" to actual student names
+      // - Change photo path to your JPG location (e.g., "assets/mahasiswa/01.jpg" or "images/student1.jpg")
+      // - Change description to describe each photo
+      // - You can use relative paths or full URLs
+      
+      const students = [
+        { no: 1, name: "Ardita Puteri Maharani", photo: "assets/mahasiswa/01.jpg", description: "Class President" },
+        { no: 2, name: "Ilham Ramadani", photo: "assets/mahasiswa/02.jpg", description: "Vice President" },
+        { no: 3, name: "Aditya Ardiyansyah", photo: "assets/mahasiswa/03.jpg", description: "Academic Coordinator" },
+        { no: 4, name: "Mutiara Aulia Rahma", photo: "assets/mahasiswa/04.jpg", description: "Secretary" },
+        { no: 5, name: "Widayu Fitri Salim", photo: "assets/mahasiswa/05.jpg", description: "Treasurer" },
+        { no: 6, name: "M. Daffa Athaya", photo: "assets/mahasiswa/06.jpg", description: "Member" },
+        { no: 7, name: "M. Akmal Firdaus", photo: "assets/mahasiswa/07.jpg", description: "Member" },
+        { no: 8, name: "M. Fatih Saputra", photo: "assets/mahasiswa/08.jpg", description: "Member" },
+        { no: 9, name: "Aldhea Salwa Nursafitri", photo: "assets/mahasiswa/09.jpg", description: "Member" },
+        { no: 10, name: "Salsabila Herlian Putri", photo: "assets/mahasiswa/10.jpg", description: "Member" },
+        { no: 11, name: "James Williams Amstrong Lede", photo: "assets/mahasiswa/11.jpg", description: "Member" },
+        { no: 12, name: "Eka Sepriyanti", photo: "assets/mahasiswa/12.jpg", description: "Member" },
+        { no: 13, name: "M. Rayhan Farrel", photo: "assets/mahasiswa/13.jpg", description: "Member" },
+        { no: 14, name: "Raihan Khairul Anam", photo: "assets/mahasiswa/14.jpg", description: "Member" },
+        { no: 15, name: "Hardiyanti Rihhadatul Taqiyah", photo: "assets/mahasiswa/15.jpg", description: "Member" },
+        { no: 16, name: "Febrian Afriaji", photo: "assets/mahasiswa/16.jpg", description: "Member" },
+        { no: 17, name: "M. Ihsan", photo: "assets/mahasiswa/17.jpg", description: "Member" },
+        { no: 18, name: "Rafid Alif Surya", photo: "assets/mahasiswa/18.jpg", description: "Member" },
+        { no: 19, name: "Hafidh Ramadhan", photo: "assets/mahasiswa/19.jpg", description: "Member" },
+        { no: 20, name: "Marlon Jona Alfreno Rasumpada", photo: "assets/mahasiswa/20.jpg", description: "Member" },
+        { no: 21, name: "Silvia Julianti", photo: "assets/mahasiswa/21.jpg", description: "Member" },
+        { no: 22, name: "M. Andika Nasution", photo: "assets/mahasiswa/22.jpg", description: "Member" },
+        { no: 23, name: "M. Havis Novriyana", photo: "assets/mahasiswa/23.jpg", description: "Member" },
+        { no: 24, name: "Student 24", photo: "assets/mahasiswa/24.jpg", description: "Member" },
+        { no: 25, name: "Student 25", photo: "assets/mahasiswa/25.jpg", description: "Member" },
+        { no: 26, name: "Student 26", photo: "assets/mahasiswa/26.jpg", description: "Member" },
+        { no: 27, name: "Student 27", photo: "assets/mahasiswa/27.jpg", description: "Member" },
+        { no: 28, name: "Student 28", photo: "assets/mahasiswa/28.jpg", description: "Member" },
+        { no: 29, name: "Student 29", photo: "assets/mahasiswa/29.jpg", description: "Member" },
+        { no: 30, name: "Student 30", photo: "assets/mahasiswa/30.jpg", description: "Member" },
+        { no: 31, name: "Student 31", photo: "assets/mahasiswa/31.jpg", description: "Member" },
+        { no: 32, name: "Student 32", photo: "assets/mahasiswa/32.jpg", description: "Member" },
+        { no: 33, name: "Student 33", photo: "assets/mahasiswa/33.jpg", description: "Member" },
+        { no: 34, name: "Student 34", photo: "assets/mahasiswa/34.jpg", description: "Member" },
+        { no: 35, name: "Student 35", photo: "assets/mahasiswa/35.jpg", description: "Member" },
+        { no: 36, name: "Student 36", photo: "assets/mahasiswa/36.jpg", description: "Member" },
+        { no: 37, name: "Student 37", photo: "assets/mahasiswa/37.jpg", description: "Member" },
+        { no: 38, name: "Student 38", photo: "assets/mahasiswa/38.jpg", description: "Member" },
+        { no: 39, name: "Student 39", photo: "assets/mahasiswa/39.jpg", description: "Member" },
+        { no: 40, name: "Student 40", photo: "assets/mahasiswa/40.jpg", description: "Member" },
+        { no: 41, name: "Student 41", photo: "assets/mahasiswa/41.jpg", description: "Member" }
+      ];
+
+      const track = document.getElementById("track");
+      const searchName = document.getElementById("searchName");
+      const countLabel = document.getElementById("countLabel");
+
+      function render(list) {
+        track.innerHTML = "";
+        list.forEach((s) => {
+          const el = document.createElement("div");
+          el.className = "student";
+          el.innerHTML = `
+          <div class="photo">
+            <img src="${s.photo}" alt="Photo ${
+            s.name
+          }" onerror="this.src='data:image/svg+xml;utf8,<?xml version=\\'1.0\\'?><svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'800\\' height=\\'1000\\'><defs><linearGradient id=\\'g\\' x1=\\'0\\' y1=\\'0\\' x2=\\'1\\' y2=\\'1\\'><stop offset=\\'0\\' stop-color=\\'%23b57bff\\' stop-opacity=\\'0.25\\'/><stop offset=\\'1\\' stop-color=\\'%237c4dff\\' stop-opacity=\\'0.08\\'/></linearGradient></defs><rect width=\\'100%\\' height=\\'100%\\' fill=\\'url(%23g)\\'/><text x=\\'50%\\' y=\\'50%\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\' fill=\\'%235a4f78\\' font-family=\\'Arial\\' font-size=\\'30\\' font-weight=\\'700\\'>Photo not available</text></svg>';">
+          </div>
+          <div class="meta">
+            <div>
+              <strong>${s.name}</strong>
+              <small>${s.description}</small>
+            </div>
+            <div class="num">${s.no}</div>
+          </div>
+        `;
+          track.appendChild(el);
+        });
+        countLabel.textContent = `${list.length} Students`;
+      }
+
+      render(students);
+
+      // Slider buttons (scroll)
+      document.getElementById("nextBtn").addEventListener("click", () => {
+        track.scrollBy({ left: 220, behavior: "smooth" });
+      });
+      document.getElementById("prevBtn").addEventListener("click", () => {
+        track.scrollBy({ left: -220, behavior: "smooth" });
+      });
+
+      // Search filter
+      searchName.addEventListener("input", (e) => {
+        const q = e.target.value.toLowerCase().trim();
+        const filtered = students.filter((s) =>
+          s.name.toLowerCase().includes(q)
+        );
+        render(filtered);
+      });
+
+      // Footer year
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      // Smooth scroll for anchor clicks
+      document.querySelectorAll('a[href^="#"]').forEach((a) => {
+        a.addEventListener("click", (ev) => {
+          const id = a.getAttribute("href");
+          const target = document.querySelector(id);
+          if (target) {
+            ev.preventDefault();
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
