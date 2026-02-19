@@ -631,9 +631,17 @@
       }
 
       /* Responsive */
+      /* Tablet/Medium Devices */
       @media (max-width: 980px) {
+        .container {
+          width: min(95vw, 100%);
+        }
         .hero {
           grid-template-columns: 1fr;
+          gap: 20px;
+        }
+        .hero-card h1 {
+          font-size: 36px;
         }
         .card {
           grid-column: span 6;
@@ -641,53 +649,213 @@
         .tile {
           grid-column: span 6;
         }
+        .grid {
+          gap: 16px;
+        }
+        .nav-inner {
+          padding: 12px 0;
+        }
       }
+
+      /* Mobile/Small Devices */
+      @media (max-width: 768px) {
+        .container {
+          width: 92vw;
+        }
+        section {
+          padding: 18px 0;
+        }
+        .nav {
+          padding: 8px 0;
+        }
+        .brand {
+          font-size: 14px;
+        }
+        .hero-card h1 {
+          font-size: 28px;
+          line-height: 1.3;
+        }
+        .sub {
+          font-size: 14px;
+        }
+        .hero-actions {
+          gap: 8px;
+          flex-direction: column;
+        }
+        .btn {
+          padding: 10px 12px;
+          font-size: 13px;
+          width: 100%;
+        }
+        .mini {
+          padding: 12px;
+        }
+        .pill {
+          flex-direction: column;
+          align-items: center;
+          gap: 4px;
+        }
+        .kpi {
+          gap: 8px;
+        }
+        .card {
+          grid-column: span 12;
+          padding: 12px;
+        }
+        .section-title {
+          flex-direction: column;
+          align-items: flex-start;
+          margin-bottom: 16px;
+        }
+        .section-title h2 {
+          font-size: 20px;
+        }
+        .tag {
+          margin-top: 8px;
+        }
+      }
+
+      /* Extra Small Mobile */
       @media (max-width: 640px) {
         .links {
           display: none;
         }
+        .container {
+          width: 90vw;
+          padding: 0 5vw;
+        }
         .card {
           grid-column: span 12;
         }
         .tile {
           grid-column: span 12;
+          min-height: 160px;
         }
         .student {
-          min-width: 44vw;
+          min-width: 50vw;
         }
         .search {
           min-width: 0;
           width: 100%;
         }
+        .search input {
+          font-size: 14px;
+        }
         .slider-top {
           flex-direction: column;
           align-items: stretch;
+          gap: 10px;
         }
         .slider-btns {
-          justify-content: flex-end;
+          justify-content: center;
+          gap: 8px;
+        }
+        .icon-btn {
+          width: 36px;
+          height: 36px;
+          font-size: 16px;
         }
         .hero-side {
           grid-template-columns: 1fr;
+          margin-top: 20px;
         }
-        .section-title {
-          flex-direction: column;
-          align-items: flex-start;
+        .mini {
+          padding: 10px;
+          border-radius: 12px;
         }
         h1 {
-          font-size: 28px;
+          font-size: 24px;
+          line-height: 1.3;
         }
         h2 {
-          font-size: 22px;
+          font-size: 18px;
+        }
+        h3 {
+          font-size: 16px;
+        }
+        h4 {
+          font-size: 14px;
         }
         table {
-          font-size: 13px;
+          font-size: 12px;
+          width: 100%;
         }
         table th, table td {
-          padding: 10px 8px;
+          padding: 8px 6px;
+          text-align: left;
         }
         .table-wrap {
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
+          border-radius: 12px;
+        }
+        .grid {
+          gap: 12px;
+        }
+        .nav-inner {
+          gap: 8px;
+        }
+        .hint {
+          font-size: 12px;
+        }
+      }
+
+      /* Ultra Mobile - Very Small Phones */
+      @media (max-width: 480px) {
+        .container {
+          width: 88vw;
+        }
+        h1 {
+          font-size: 20px;
+        }
+        h2 {
+          font-size: 16px;
+        }
+        h3 {
+          font-size: 14px;
+        }
+        section {
+          padding: 14px 0;
+        }
+        .badge {
+          padding: 6px 10px;
+          font-size: 10px;
+        }
+        .hero-actions {
+          gap: 6px;
+        }
+        .btn {
+          padding: 9px 10px;
+          font-size: 12px;
+          border-radius: 12px;
+        }
+        table {
+          font-size: 11px;
+        }
+        table th, table td {
+          padding: 6px 4px;
+        }
+        .student {
+          min-width: 55vw;
+          padding: 6px;
+        }
+        .photo {
+          width: 100px;
+          height: 120px;
+        }
+        .num {
+          width: 20px;
+          height: 20px;
+          font-size: 9px;
+        }
+        .meta {
+          margin-top: 4px;
+        }
+        .meta strong {
+          font-size: 10px;
+        }
+        .meta small {
+          font-size: 8px;
         }
       }
     </style>
