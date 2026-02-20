@@ -38,6 +38,20 @@
       body {
         height: 100%;
       }
+      html {
+        scroll-behavior: smooth;
+      }
+      *,
+      *::before,
+      *::after {
+        transition:
+          background-color 0.28s ease,
+          color 0.28s ease,
+          border-color 0.28s ease,
+          box-shadow 0.28s ease,
+          opacity 0.28s ease,
+          transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      }
       body {
         margin: 0;
         color: var(--text);
@@ -196,6 +210,46 @@
         75% {
           transform: translate(-8px, 8px) scale(1.01);
           opacity: 0.8;
+        }
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(20px);
+        transition:
+          opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+          transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+        will-change: transform, opacity;
+      }
+      .reveal.in-view {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .reveal-delay-1 {
+        transition-delay: 0.06s;
+      }
+      .reveal-delay-2 {
+        transition-delay: 0.12s;
+      }
+      .reveal-delay-3 {
+        transition-delay: 0.18s;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        *,
+        *::before,
+        *::after {
+          animation: none !important;
+          transition-duration: 0.01ms !important;
+          transition-delay: 0ms !important;
+        }
+        .reveal,
+        .reveal.in-view {
+          opacity: 1 !important;
+          transform: none !important;
         }
       }
 
@@ -1097,7 +1151,7 @@
         }
         .hero-card {
           padding: 20px;
-          background: rgba(255, 255, 255, 0.6);
+          background: var(--card);
         }
         .badge {
           padding: 6px 10px;
@@ -1280,7 +1334,7 @@
         .mini {
           padding: 12px;
           border-radius: 14px;
-          background: rgba(255, 255, 255, 0.65);
+          background: var(--card);
         }
         .mini h3 {
           font-size: 15px;
@@ -1790,7 +1844,7 @@
         <div class="card">
           <h4>Academic Coordinator</h4>
           <div class="role">Coordinator</div>
-          <div class="name">Aditya Ardiyansyah</div>
+          <div class="name">Aditya Ardiansyah</div>
           <div class="desc">
             Coordinates activities.
           </div>
@@ -1986,7 +2040,7 @@
       const students = [
         { no: 1, name: "Ardita Puteri Maharani", photo: "public/hara.jpeg", description: "Class President" },
         { no: 2, name: "Ilham Ramadani", photo: "public/ilham.jpeg", description: "Vice President" },
-        { no: 3, name: "Aditya Ardiyansyah", photo: "public/adit.jpeg", description: "Academic Coordinator" },
+        { no: 3, name: "Aditya Ardiansyah", photo: "public/adit.jpeg", description: "Academic Coordinator" },
         { no: 4, name: "Mutiara Aulia Rahma", photo: "public/mutiara.jpeg", description: "Secretary" },
         { no: 5, name: "Widayu Fitri Salim", photo: "public/widayu.jpeg", description: "Treasurer" },
         { no: 6, name: "M. Daffa Athaya", photo: "public/dapa.jpeg", description: "Member" },
@@ -2140,6 +2194,40 @@
           }
         });
       });
+
+      // Reveal animation on scroll (down & up)
+      const revealTargets = document.querySelectorAll(
+        "header .hero-card, header .hero-side, section .section-title, section .grid, section .table-wrap, section .slider, section .gallery-wrapper, footer.container"
+      );
+
+      revealTargets.forEach((el, index) => {
+        el.classList.add("reveal");
+        const delayClass = `reveal-delay-${(index % 3) + 1}`;
+        el.classList.add(delayClass);
+      });
+
+      if ("IntersectionObserver" in window) {
+        const revealObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("in-view");
+              } else {
+                entry.target.classList.remove("in-view");
+              }
+            });
+          },
+          {
+            threshold: 0.18,
+            rootMargin: "0px 0px -8% 0px"
+          }
+        );
+
+        revealTargets.forEach((el) => revealObserver.observe(el));
+      } else {
+        revealTargets.forEach((el) => el.classList.add("in-view"));
+      }
     </script>
   </body>
 </html>
+
