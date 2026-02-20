@@ -1831,7 +1831,7 @@
         </button>
 
         <div class="links" id="navLinks">
-          <a href="#profile">Description</a>
+          <a href="#top">Profile</a>
           <a href="#struktur">Structure</a>
           <a href="#mahasiswa">Students</a>
           <a href="#jadwal">Schedule</a>
@@ -2305,9 +2305,22 @@
       const navLinks = document.getElementById("navLinks");
 
       if (menuToggle && navLinks) {
+        const closeMobileMenu = () => {
+          navLinks.classList.remove("is-open");
+          menuToggle.setAttribute("aria-expanded", "false");
+        };
+
         menuToggle.addEventListener("click", () => {
           const isOpen = navLinks.classList.toggle("is-open");
           menuToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        });
+
+        navLinks.querySelectorAll("a").forEach((link) => {
+          link.addEventListener("click", () => {
+            if (window.matchMedia("(max-width: 768px)").matches) {
+              closeMobileMenu();
+            }
+          });
         });
       }
 
