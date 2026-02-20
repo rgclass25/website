@@ -1345,6 +1345,22 @@
         .links {
           display: none;
         }
+        .links.is-open {
+          display: flex;
+          position: absolute;
+          top: calc(100% + 8px);
+          right: 0;
+          width: min(88vw, 290px);
+          flex-direction: column;
+          align-items: stretch;
+          gap: 8px;
+          padding: 10px;
+          border-radius: 16px;
+          border: 1px solid rgba(217, 70, 239, 0.3);
+          background: rgba(15, 10, 30, 0.92);
+          box-shadow: 0 12px 36px rgba(217, 70, 239, 0.22);
+          z-index: 60;
+        }
         .container {
           width: 88vw;
           margin: 0 auto;
@@ -2252,7 +2268,10 @@
       }
 
       // Footer year
-      document.getElementById("year").textContent = new Date().getFullYear();
+      const yearEl = document.getElementById("year");
+      if (yearEl) {
+        yearEl.textContent = new Date().getFullYear();
+      }
 
       // Smooth scroll for anchor clicks
       document.querySelectorAll('a[href^="#"]').forEach((a) => {
