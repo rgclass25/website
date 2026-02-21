@@ -1014,6 +1014,7 @@
       .footer-text {
         font-size: 12px;
         letter-spacing: 0.2px;
+        text-align: center;
       }
       .tools-links a {
         color: var(--text);
@@ -2131,7 +2132,7 @@
     </section>
 
     <footer class="container reveal in-view">
-      <div class="footer-text"><center>© 2025 by ilham. All rights reserved.</center></div>
+      <div class="footer-text">© 2025 by ilham. All rights reserved.</div>
     </footer>
 
     <script>
@@ -2310,7 +2311,7 @@
       }
 
       const revealTargets = document.querySelectorAll(
-        "header .hero-card, header .hero-side, section .section-title, section .grid, section .table-wrap, section .slider, section .gallery-wrapper, footer.container"
+        "header .hero-card, header .hero-side, section .section-title, section .grid, section .table-wrap, section .slider, section .gallery-wrapper"
       );
 
       revealTargets.forEach((el, index) => {
@@ -2325,8 +2326,6 @@
             entries.forEach((entry) => {
               if (entry.isIntersecting) {
                 entry.target.classList.add("in-view");
-              } else {
-                entry.target.classList.remove("in-view");
               }
             });
           },
