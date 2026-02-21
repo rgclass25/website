@@ -147,6 +147,39 @@
         animation: scanDrift 18s linear infinite;
       }
 
+
+      .scroll-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        transform-origin: 0 50%;
+        transform: scaleX(0);
+        background: linear-gradient(90deg, rgba(244, 114, 182, 0.92), rgba(34, 211, 238, 0.88));
+        box-shadow: 0 0 18px rgba(236, 72, 153, 0.5), 0 0 24px rgba(34, 211, 238, 0.35);
+        z-index: 120;
+        pointer-events: none;
+      }
+
+      .cursor-orb {
+        position: fixed;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 80;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        transform: translate3d(-999px, -999px, 0);
+        background: radial-gradient(circle, rgba(244, 114, 182, 0.22) 0%, rgba(34, 211, 238, 0.14) 45%, rgba(15, 10, 30, 0) 75%);
+        filter: blur(6px);
+        transition: opacity 0.25s ease;
+        mix-blend-mode: screen;
+        animation: orbPulse 3.8s ease-in-out infinite;
+      }
+
       .blob {
         position: fixed;
         inset: auto;
@@ -284,6 +317,27 @@
         }
       }
 
+      @keyframes cyberFlow {
+        0% {
+          background-position: 0% 50%;
+        }
+        100% {
+          background-position: 200% 50%;
+        }
+      }
+
+      @keyframes orbPulse {
+        0%,
+        100% {
+          opacity: 0.62;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.9;
+          transform: scale(1.08);
+        }
+      }
+
       .reveal {
         opacity: 0;
         transform: translateY(20px);
@@ -324,6 +378,9 @@
         }
         body::after {
           animation: none !important;
+        }
+        .cursor-orb {
+          display: none !important;
         }
       }
 
@@ -517,6 +574,7 @@
         transform: translateY(0px);
       }
 
+
       header {
         padding: 56px 0 28px;
         position: relative;
@@ -548,8 +606,10 @@
         top: 0;
         height: 2px;
         background: var(--cyber-line);
+        background-size: 200% 100%;
         opacity: 0.6;
         pointer-events: none;
+        animation: cyberFlow 3.6s linear infinite;
       }
       .hero-card:hover {
         box-shadow: 
@@ -714,8 +774,10 @@
         top: 0;
         height: 1px;
         background: var(--cyber-line);
+        background-size: 200% 100%;
         opacity: 0.42;
         pointer-events: none;
+        animation: cyberFlow 4.2s linear infinite;
       }
       .mini:hover {
         transform: translateY(-2px);
@@ -818,8 +880,10 @@
         top: 0;
         height: 1px;
         background: var(--cyber-line);
+        background-size: 200% 100%;
         opacity: 0.38;
         pointer-events: none;
+        animation: cyberFlow 4.8s linear infinite;
       }
       .card:hover {
         transform: translateY(-4px);
@@ -1152,6 +1216,17 @@
         background: linear-gradient(120deg, rgba(244, 114, 182, 0.14), transparent 40%, rgba(34, 211, 238, 0.16));
         mix-blend-mode: screen;
         pointer-events: none;
+        background-size: 200% 100%;
+        animation: cyberFlow 5.4s linear infinite;
+      }
+
+      .hero-card,
+      .mini,
+      .card,
+      .student,
+      .tile {
+        will-change: transform;
+        transform-style: preserve-3d;
       }
       .tile:hover {
         transform: translateY(-6px);
@@ -1330,6 +1405,9 @@
         body::after {
           opacity: 0.08;
           background-size: 30px 30px;
+        }
+        .cursor-orb {
+          display: none;
         }
         .blob {
           width: 300px;
@@ -1853,6 +1931,9 @@
           opacity: 0.05;
           background-size: 26px 26px;
         }
+        .scroll-progress {
+          height: 2px;
+        }
         .blob {
           display: none;
         }
@@ -1995,6 +2076,8 @@
   </head>
 
   <body id="top">
+    <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+    <div class="cursor-orb" id="cursorOrb" aria-hidden="true"></div>
     <div class="blob b1"></div>
     <div class="blob b2"></div>
 
@@ -2490,6 +2573,61 @@
 
       const menuToggle = document.getElementById("menuToggle");
       const navLinks = document.getElementById("navLinks");
+      const scrollProgress = document.getElementById("scrollProgress");
+      const cursorOrb = document.getElementById("cursorOrb");
+
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const updateScrollProgress = () => {
+        if (!scrollProgress) {
+          return;
+        }
+        const doc = document.documentElement;
+        const scrollable = doc.scrollHeight - window.innerHeight;
+        const ratio = scrollable > 0 ? window.scrollY / scrollable : 0;
+        scrollProgress.style.transform = `scaleX(${Math.max(0, Math.min(1, ratio))})`;
+      };
+
+      updateScrollProgress();
+      window.addEventListener("scroll", updateScrollProgress, { passive: true });
+      window.addEventListener("resize", updateScrollProgress);
+
+      if (!reducedMotion && cursorOrb) {
+        let orbX = -999;
+        let orbY = -999;
+
+        window.addEventListener("pointermove", (event) => {
+          orbX = event.clientX - 90;
+          orbY = event.clientY - 90;
+          cursorOrb.style.opacity = "1";
+          cursorOrb.style.transform = `translate3d(${orbX}px, ${orbY}px, 0)`;
+        });
+
+        window.addEventListener("pointerleave", () => {
+          cursorOrb.style.opacity = "0";
+        });
+      }
+
+      if (!reducedMotion && window.matchMedia("(min-width: 900px)").matches) {
+        const tiltTargets = document.querySelectorAll(
+          ".hero-card, .mini, .card, .student, .tile"
+        );
+
+        tiltTargets.forEach((element) => {
+          element.addEventListener("mousemove", (event) => {
+            const rect = element.getBoundingClientRect();
+            const relX = (event.clientX - rect.left) / rect.width;
+            const relY = (event.clientY - rect.top) / rect.height;
+            const rotateY = (relX - 0.5) * 8;
+            const rotateX = (0.5 - relY) * 8;
+            element.style.transform = `perspective(900px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-4px)`;
+          });
+
+          element.addEventListener("mouseleave", () => {
+            element.style.transform = "";
+          });
+        });
+      }
 
       if (menuToggle && navLinks) {
         const closeMobileMenu = () => {
