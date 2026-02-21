@@ -839,6 +839,15 @@
         justify-content: space-between;
         gap: 12px;
         margin-bottom: 12px;
+        position: relative;
+        padding-right: 132px;
+      }
+      .section-title .tag {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin-top: 0;
+        white-space: nowrap;
       }
       .section-title h2 {
         margin: 0;
@@ -1289,9 +1298,119 @@
         font-weight: 700;
         border-bottom: 1px solid rgba(236, 72, 153, 0.35);
       }
+      .anonymous-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .anonymous-row {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        align-items: center;
+        gap: 10px;
+      }
+      .anonymous-label {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text);
+        line-height: 1.1;
+        font-family: "Space Grotesk", sans-serif;
+        letter-spacing: 0.2px;
+      }
+      .anonymous-input,
+      .anonymous-textarea {
+        width: 100%;
+        border: 1px solid rgba(236, 72, 153, 0.35);
+        background: rgba(15, 10, 30, 0.7);
+        color: var(--text);
+        border-radius: 12px;
+        padding: 11px 13px;
+        font-size: 15px;
+        font-weight: 600;
+        font-family: inherit;
+        outline: none;
+      }
+      .anonymous-input::placeholder,
+      .anonymous-textarea::placeholder {
+        color: rgba(226, 232, 240, 0.68);
+      }
+      .anonymous-input:focus,
+      .anonymous-textarea:focus {
+        border-color: rgba(236, 72, 153, 0.6);
+        box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.16);
+      }
+      .anonymous-textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+      .anonymous-submit {
+        margin-top: 8px;
+        width: 100%;
+        border: 0;
+        border-radius: 999px;
+        padding: 12px 16px;
+        font-size: 16px;
+        font-weight: 800;
+        color: #fff;
+        background: linear-gradient(135deg, rgba(236, 72, 153, 0.95), rgba(147, 51, 234, 0.95));
+        background-size: 200% 100%;
+        cursor: pointer;
+        animation: cyberFlow 3.2s linear infinite;
+        box-shadow: 0 10px 28px rgba(217, 70, 239, 0.3);
+      }
+      .anonymous-submit:hover {
+        filter: brightness(1.07);
+      }
+      .anonymous-submit:disabled {
+        opacity: 0.75;
+        cursor: not-allowed;
+      }
+      .anonymous-status {
+        min-height: 20px;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .anonymous-status.success {
+        color: #86efac;
+      }
+      .anonymous-status.error {
+        color: #fda4af;
+      }
       .tools-links a:hover {
         color: #fff;
         border-bottom-color: rgba(236, 72, 153, 0.7);
+      }
+
+      @media (max-width: 768px) {
+        .anonymous-row {
+          grid-template-columns: 92px 1fr;
+          align-items: stretch;
+          gap: 8px;
+        }
+        .anonymous-label {
+          font-size: 16px;
+        }
+        .anonymous-input,
+        .anonymous-textarea {
+          font-size: 14px;
+        }
+        .anonymous-submit {
+          font-size: 15px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .anonymous-row {
+          grid-template-columns: 1fr;
+        }
+        .anonymous-label {
+          font-size: 15px;
+        }
+        .anonymous-submit {
+          font-size: 14px;
+          padding: 11px 14px;
+        }
       }
 
       @media (max-width: 980px) {
@@ -1559,6 +1678,7 @@
           align-items: flex-start;
           margin-bottom: 14px;
           gap: 8px;
+          padding-right: 118px;
         }
         .section-title h2 {
           font-size: 20px;
@@ -1746,6 +1866,7 @@
           align-items: flex-start;
           margin-bottom: 12px;
           gap: 6px;
+          padding-right: 102px;
         }
         .section-title h2 {
           font-size: 18px;
@@ -2402,6 +2523,67 @@
       </div>
     </section>
 
+    <section class="container" id="anonymous-message">
+      <div class="section-title">
+        <div>
+          <h2>Send Anonymous Message</h2>
+          <p>Send secret messages to classmates.</p>
+        </div>
+        <span class="tag">Anonymous</span>
+      </div>
+
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <form
+            class="anonymous-form"
+            id="anonymousForm"
+            action="https://script.google.com/macros/s/AKfycbx4LHGX3gmFbykdNQ2Qp8SrgiUHI8U4V4clVG1TuJYAImpZr4nfxPtOycvJPQGdWG9V/exec"
+            method="POST"
+          >
+            <div class="anonymous-row">
+              <label class="anonymous-label" for="anonSender">From</label>
+              <input
+                class="anonymous-input"
+                id="anonSender"
+                name="dari"
+                type="text"
+                placeholder="Sender name"
+                required
+              />
+            </div>
+
+            <div class="anonymous-row">
+              <label class="anonymous-label" for="anonReceiver">To</label>
+              <input
+                class="anonymous-input"
+                id="anonReceiver"
+                name="kepada"
+                type="text"
+                placeholder="Recipient name"
+                required
+              />
+            </div>
+
+            <div class="anonymous-row">
+              <label class="anonymous-label" for="anonMessage">Message</label>
+              <textarea
+                class="anonymous-textarea"
+                id="anonMessage"
+                name="pesan"
+                placeholder="Write a message..."
+                required
+              ></textarea>
+            </div>
+
+            <button class="anonymous-submit" id="anonymousSubmit" type="submit">
+              Send Message
+            </button>
+            <div class="anonymous-status" id="anonymousStatus" aria-live="polite"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+
     <section class="container" id="tools">
       <div class="grid">
         <div class="card" style="grid-column: span 12">
@@ -2467,6 +2649,9 @@
       const track = document.getElementById("track");
       const searchName = document.getElementById("searchName");
       const countLabel = document.getElementById("countLabel");
+      const anonymousForm = document.getElementById("anonymousForm");
+      const anonymousSubmit = document.getElementById("anonymousSubmit");
+      const anonymousStatus = document.getElementById("anonymousStatus");
 
       function render(list) {
         track.innerHTML = "";
@@ -2493,6 +2678,33 @@
       }
 
       render(students);
+
+      if (anonymousForm && anonymousSubmit && anonymousStatus) {
+        anonymousForm.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          anonymousStatus.className = "anonymous-status";
+          anonymousStatus.textContent = "Sending message...";
+          anonymousSubmit.disabled = true;
+
+          try {
+            const formData = new FormData(anonymousForm);
+            await fetch(anonymousForm.action, {
+              method: "POST",
+              body: formData,
+              mode: "no-cors"
+            });
+
+            anonymousForm.reset();
+            anonymousStatus.className = "anonymous-status success";
+            anonymousStatus.textContent = "Anonymous message sent successfully ✨";
+          } catch {
+            anonymousStatus.className = "anonymous-status error";
+            anonymousStatus.textContent = "Failed to send message. Please try again.";
+          } finally {
+            anonymousSubmit.disabled = false;
+          }
+        });
+      }
 
       let touchStartX = 0;
       let touchEndX = 0;
