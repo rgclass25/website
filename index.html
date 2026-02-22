@@ -1454,6 +1454,24 @@
       .anonymous-feed {
         display: grid;
         gap: 10px;
+        max-height: 360px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-right: 4px;
+      }
+      .anonymous-feed::-webkit-scrollbar {
+        width: 6px;
+      }
+      .anonymous-feed::-webkit-scrollbar-track {
+        background: rgba(236, 72, 153, 0.14);
+        border-radius: 999px;
+      }
+      .anonymous-feed::-webkit-scrollbar-thumb {
+        background: rgba(217, 70, 239, 0.5);
+        border-radius: 999px;
+      }
+      .anonymous-feed::-webkit-scrollbar-thumb:hover {
+        background: rgba(6, 182, 212, 0.55);
       }
       .anonymous-feed.is-stacked {
         gap: 0;
@@ -2449,7 +2467,7 @@
 
           <div class="hero-actions">
             <a class="btn primary" href="#mahasiswa">View Students</a>
-            <a class="btn" href="#tools">Tools</a>
+            <a class="btn" href="#struktur">Management Structure</a>
             <a class="btn" href="#anonymous-message">Message</a>
           </div>
         </div>
@@ -2865,8 +2883,6 @@
       const anonymousFeed = document.getElementById("anonymousFeed");
       const anonymousStorageKey = "rgclass_anonymous_messages_v1";
       const maxAnonymousMessages = 50;
-      const anonymousStackThreshold = 5;
-      const anonymousStackVisibleCount = 5;
       const anonymousCooldownMs = 5 * 60 * 1000;
       const anonymousCooldownKey = "rgclass_anonymous_last_sent_at_v1";
       const anonymousCloudConfig = {
@@ -3033,13 +3049,7 @@
           return;
         }
 
-        const shouldUseStack =
-          messages.length > anonymousStackThreshold && !anonymousFeedExpanded;
-        const messagesToRender = shouldUseStack
-          ? messages.slice(0, anonymousStackVisibleCount)
-          : messages;
-
-        messagesToRender.forEach((message) => {
+        messages.forEach((message) => {
           const item = document.createElement("article");
           item.className = "anonymous-item";
 
@@ -3061,35 +3071,10 @@
           item.append(top, text);
           anonymousFeed.appendChild(item);
         });
-
-        if (messages.length > anonymousStackThreshold) {
-          const hiddenCount = messages.length - messagesToRender.length;
-          const control = document.createElement("div");
-          control.className = "anonymous-stack-control";
-
-          const info = document.createElement("span");
-          info.className = "anonymous-stack-info";
-          info.textContent = anonymousFeedExpanded
-            ? `Showing all ${messages.length} messages`
-            : `${hiddenCount} more message${hiddenCount > 1 ? "s" : ""}`;
-
-          const toggleButton = document.createElement("button");
-          toggleButton.type = "button";
-          toggleButton.className = "anonymous-stack-btn";
-          toggleButton.textContent = anonymousFeedExpanded ? "Show Less" : "Show All";
-          toggleButton.addEventListener("click", () => {
-            anonymousFeedExpanded = !anonymousFeedExpanded;
-            renderAnonymousMessages(anonymousMessages);
-          });
-
-          control.append(info, toggleButton);
-          anonymousFeed.appendChild(control);
-        }
       }
 
       let anonymousMessages = [];
       let anonymousSyncTimer = null;
-      let anonymousFeedExpanded = false;
       let anonymousCooldownTimer = null;
 
       function applyAnonymousCooldownState() {
