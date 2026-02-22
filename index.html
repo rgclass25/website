@@ -1293,6 +1293,21 @@
         color: transparent;
         text-shadow: 0 0 20px rgba(217, 70, 239, 0.22);
       }
+      .footer-text a {
+        background: linear-gradient(90deg, rgba(240, 171, 252, 0.95), rgba(103, 232, 249, 0.92));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-decoration: none;
+        font-weight: 700;
+        transition: all 0.3s ease;
+      }
+      .footer-text a:hover {
+        background: linear-gradient(90deg, rgba(236, 72, 153, 1), rgba(6, 182, 212, 1));
+        -webkit-background-clip: text;
+        background-clip: text;
+        text-shadow: 0 0 30px rgba(217, 70, 239, 0.5);
+      }
       .tools-links a {
         color: var(--text);
         font-weight: 700;
@@ -2730,7 +2745,7 @@
     </section>
 
     <footer class="container reveal in-view">
-      <div class="footer-text">© 2025 by ilham. All rights reserved.</div>
+      <div class="footer-text">© 2025 by <a href="https://instagram.com/ilhamm.18" target="_blank" rel="noopener noreferrer">ilham</a>. All rights reserved.</div>
     </footer>
 
     <script>
@@ -2814,7 +2829,6 @@
               <strong>${s.name}</strong>
               <small>${s.description}</small>
             </div>
-            <div class="num">${s.no}</div>
           </div>
         `;
           track.appendChild(el);
