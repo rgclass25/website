@@ -1364,7 +1364,7 @@
       .anonymous-form {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 11px;
       }
       .anonymous-row {
         display: grid;
@@ -1379,12 +1379,15 @@
         line-height: 1.1;
         font-family: "Space Grotesk", sans-serif;
         letter-spacing: 0.2px;
+        text-shadow: 0 0 14px rgba(236, 72, 153, 0.16);
       }
       .anonymous-input,
       .anonymous-textarea {
         width: 100%;
         border: 1px solid rgba(236, 72, 153, 0.35);
-        background: rgba(15, 10, 30, 0.7);
+        background:
+          linear-gradient(140deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0) 62%),
+          rgba(15, 10, 30, 0.7);
         color: var(--text);
         border-radius: 12px;
         padding: 11px 13px;
@@ -1392,6 +1395,16 @@
         font-weight: 600;
         font-family: inherit;
         outline: none;
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.06),
+          0 6px 16px rgba(10, 6, 24, 0.3);
+      }
+      .anonymous-input:hover,
+      .anonymous-textarea:hover {
+        border-color: rgba(236, 72, 153, 0.5);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.08),
+          0 8px 20px rgba(12, 7, 30, 0.36);
       }
       .anonymous-input::placeholder,
       .anonymous-textarea::placeholder {
@@ -1400,7 +1413,9 @@
       .anonymous-input:focus,
       .anonymous-textarea:focus {
         border-color: rgba(236, 72, 153, 0.6);
-        box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.16);
+        box-shadow:
+          0 0 0 3px rgba(236, 72, 153, 0.16),
+          0 10px 24px rgba(12, 7, 30, 0.4);
       }
       .anonymous-textarea {
         min-height: 120px;
@@ -1415,18 +1430,90 @@
         font-size: 16px;
         font-weight: 800;
         color: #fff;
-        background: linear-gradient(135deg, rgba(236, 72, 153, 0.95), rgba(147, 51, 234, 0.95));
-        background-size: 200% 100%;
+        letter-spacing: 0.25px;
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+        background: linear-gradient(
+          135deg,
+          rgba(244, 114, 182, 0.96) 0%,
+          rgba(217, 70, 239, 0.96) 42%,
+          rgba(147, 51, 234, 0.96) 100%
+        );
+        background-size: 220% 100%;
         cursor: pointer;
-        animation: cyberFlow 3.2s linear infinite;
-        box-shadow: 0 10px 28px rgba(217, 70, 239, 0.3);
+        animation: cyberFlow 4s linear infinite;
+        box-shadow:
+          0 12px 34px rgba(217, 70, 239, 0.34),
+          0 0 0 1px rgba(244, 114, 182, 0.28) inset,
+          0 -1px 0 rgba(255, 255, 255, 0.2) inset;
+      }
+      .anonymous-submit::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -42%;
+        width: 38%;
+        height: 100%;
+        z-index: -1;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0),
+          rgba(255, 255, 255, 0.34),
+          rgba(255, 255, 255, 0)
+        );
+        transform: skewX(-18deg);
       }
       .anonymous-submit:hover {
-        filter: brightness(1.07);
+        transform: translateY(-1px);
+        filter: brightness(1.08) saturate(1.08);
+        box-shadow:
+          0 14px 40px rgba(217, 70, 239, 0.42),
+          0 0 0 1px rgba(244, 114, 182, 0.34) inset,
+          0 -1px 0 rgba(255, 255, 255, 0.24) inset;
+      }
+      .anonymous-submit:hover::before {
+        animation: anonymousShine 0.95s ease-out;
+      }
+      .anonymous-submit:active {
+        transform: translateY(0);
+        filter: brightness(1.02) saturate(1.02);
+        box-shadow:
+          0 8px 22px rgba(217, 70, 239, 0.26),
+          0 0 0 1px rgba(244, 114, 182, 0.22) inset,
+          0 -1px 0 rgba(255, 255, 255, 0.16) inset;
+      }
+      .anonymous-submit:focus-visible {
+        outline: none;
+        box-shadow:
+          0 0 0 3px rgba(34, 211, 238, 0.45),
+          0 12px 34px rgba(217, 70, 239, 0.34),
+          0 0 0 1px rgba(244, 114, 182, 0.28) inset;
       }
       .anonymous-submit:disabled {
-        opacity: 0.75;
+        opacity: 0.62;
         cursor: not-allowed;
+        transform: none;
+        filter: saturate(0.88) brightness(0.92);
+        box-shadow:
+          0 6px 14px rgba(217, 70, 239, 0.16),
+          0 0 0 1px rgba(244, 114, 182, 0.12) inset;
+      }
+      .anonymous-submit:disabled::before {
+        display: none;
+      }
+      @keyframes anonymousShine {
+        0% {
+          left: -42%;
+          opacity: 0;
+        }
+        18% {
+          opacity: 1;
+        }
+        100% {
+          left: 122%;
+          opacity: 0;
+        }
       }
       .anonymous-status {
         min-height: 20px;
@@ -1450,6 +1537,10 @@
         font-weight: 800;
         font-family: "Space Grotesk", sans-serif;
         color: var(--text);
+        letter-spacing: 0.2px;
+        text-shadow:
+          0 0 18px rgba(236, 72, 153, 0.2),
+          0 0 26px rgba(6, 182, 212, 0.12);
       }
       .anonymous-feed {
         display: grid;
@@ -1457,7 +1548,7 @@
         max-height: 360px;
         overflow-y: auto;
         overflow-x: hidden;
-        padding-right: 4px;
+        padding: 2px 4px 2px 1px;
       }
       .anonymous-feed::-webkit-scrollbar {
         width: 6px;
@@ -1501,12 +1592,159 @@
       }
       .anonymous-item {
         border: 1px solid rgba(236, 72, 153, 0.24);
-        background: rgba(10, 6, 24, 0.72);
+        background:
+          linear-gradient(145deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0) 58%),
+          rgba(10, 6, 24, 0.74);
         border-radius: 12px;
         padding: 10px 12px;
-        box-shadow: 0 6px 20px rgba(12, 7, 30, 0.45);
+        box-shadow:
+          0 6px 20px rgba(12, 7, 30, 0.45),
+          inset 0 1px 0 rgba(255, 255, 255, 0.05);
         position: relative;
         z-index: 1;
+        overflow: hidden;
+        backdrop-filter: blur(4px);
+        cursor: pointer;
+      }
+      .anonymous-item::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(236, 72, 153, 0), rgba(236, 72, 153, 0.42), rgba(6, 182, 212, 0.4), rgba(6, 182, 212, 0));
+        opacity: 0.9;
+      }
+      .anonymous-item:hover {
+        border-color: rgba(236, 72, 153, 0.36);
+        transform: translateY(-1px);
+        box-shadow:
+          0 10px 28px rgba(12, 7, 30, 0.55),
+          0 0 0 1px rgba(236, 72, 153, 0.1) inset,
+          inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      }
+      .anonymous-item.is-context-target {
+        transform: translateY(-1px) scale(1.01);
+        border-color: rgba(34, 211, 238, 0.4);
+      }
+      body.wa-context-open {
+        overflow: hidden;
+      }
+      .wa-context-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 500;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .wa-context-overlay.is-open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .wa-context-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(7, 12, 14, 0.56);
+        backdrop-filter: blur(10px) saturate(120%);
+      }
+      .wa-context-layer {
+        position: absolute;
+        width: min(360px, calc(100vw - 24px));
+        display: grid;
+        gap: 10px;
+      }
+      .wa-context-reactions {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-height: 58px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: rgba(32, 35, 39, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.42);
+      }
+      .wa-reaction-btn {
+        border: 0;
+        background: transparent;
+        padding: 0;
+        font-size: 33px;
+        line-height: 1;
+        cursor: pointer;
+      }
+      .wa-reaction-plus {
+        margin-left: auto;
+        border: 0;
+        width: 42px;
+        height: 42px;
+        border-radius: 999px;
+        color: rgba(240, 245, 252, 0.92);
+        background: rgba(98, 104, 112, 0.4);
+        font-size: 32px;
+        line-height: 1;
+        cursor: pointer;
+      }
+      .wa-context-bubble {
+        margin-left: auto;
+        margin-right: auto;
+        width: fit-content;
+        max-width: min(100%, 320px);
+        background:
+          linear-gradient(150deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0) 52%),
+          linear-gradient(160deg, rgba(236, 72, 153, 0.2), rgba(147, 51, 234, 0.16) 46%, rgba(6, 182, 212, 0.14) 100%),
+          rgba(13, 9, 30, 0.95);
+        border: 1px solid rgba(236, 72, 153, 0.34);
+        border-radius: 16px 16px 4px 16px;
+        color: var(--text);
+        padding: 10px 13px 8px;
+        position: relative;
+        box-shadow:
+          0 12px 26px rgba(0, 0, 0, 0.35),
+          0 0 0 1px rgba(236, 72, 153, 0.12) inset,
+          0 0 24px rgba(34, 211, 238, 0.16);
+      }
+      .wa-context-bubble::after {
+        content: "";
+        position: absolute;
+        right: 14px;
+        bottom: -8px;
+        width: 14px;
+        height: 14px;
+        transform: rotate(45deg);
+        background: rgba(21, 12, 39, 0.98);
+        border-top: 1px solid rgba(236, 72, 153, 0.34);
+        border-right: 1px solid rgba(236, 72, 153, 0.34);
+      }
+      .wa-context-message {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.35;
+        word-break: break-word;
+      }
+      .wa-context-meta {
+        margin-top: 6px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        align-items: end;
+        column-gap: 6px;
+        font-size: 13px;
+        color: rgba(226, 232, 240, 0.82);
+      }
+      .wa-context-route {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .wa-context-time {
+        white-space: nowrap;
+        color: rgba(226, 232, 240, 0.9);
+      }
+      .wa-context-check {
+        color: #67e8f9;
+        font-size: 13px;
+        white-space: nowrap;
       }
       .anonymous-item.is-preview {
         padding: 8px 12px;
@@ -2825,6 +3063,23 @@
       </div>
     </section>
 
+    <div class="wa-context-overlay" id="waContextOverlay" aria-hidden="true">
+      <div class="wa-context-backdrop" data-wa-close="true"></div>
+      <div class="wa-context-layer" id="waContextLayer" role="dialog" aria-modal="true" aria-label="Message actions">
+        <div class="wa-context-reactions">
+          <button class="wa-reaction-btn" type="button" aria-label="Like">👍</button>
+          <button class="wa-reaction-btn" type="button" aria-label="Love">❤️</button>
+          <button class="wa-reaction-btn" type="button" aria-label="Laugh">😂</button>
+          <button class="wa-reaction-btn" type="button" aria-label="Surprised">😮</button>
+          <button class="wa-reaction-btn" type="button" aria-label="Sad">🥲</button>
+          <button class="wa-reaction-btn" type="button" aria-label="Pray">🙏</button>
+          <button class="wa-reaction-btn" type="button" aria-label="Fire">🔥</button>
+          <button class="wa-reaction-plus" type="button" aria-label="More reactions">+</button>
+        </div>
+        <div class="wa-context-bubble" id="waContextBubble"></div>
+      </div>
+    </div>
+
     <footer class="container reveal in-view">
       <div class="footer-text">© 2025 by <a href="https://instagram.com/ilhamm.18" target="_blank" rel="noopener noreferrer">ilham</a>. All rights reserved.</div>
     </footer>
@@ -2881,6 +3136,9 @@
       const anonymousSubmit = document.getElementById("anonymousSubmit");
       const anonymousStatus = document.getElementById("anonymousStatus");
       const anonymousFeed = document.getElementById("anonymousFeed");
+      const waContextOverlay = document.getElementById("waContextOverlay");
+      const waContextLayer = document.getElementById("waContextLayer");
+      const waContextBubble = document.getElementById("waContextBubble");
       const anonymousStorageKey = "rgclass_anonymous_messages_v1";
       const maxAnonymousMessages = 50;
       const anonymousCooldownMs = 5 * 60 * 1000;
@@ -2891,6 +3149,140 @@
         tableName: "anonymous_messages"
       };
       const anonymousSyncIntervalMs = 15000;
+      let activeAnonymousItem = null;
+
+      function closeAnonymousContextMenu() {
+        if (!waContextOverlay) {
+          return;
+        }
+
+        waContextOverlay.classList.remove("is-open");
+        waContextOverlay.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("wa-context-open");
+
+        if (activeAnonymousItem) {
+          activeAnonymousItem.classList.remove("is-context-target");
+          activeAnonymousItem.setAttribute("aria-expanded", "false");
+          activeAnonymousItem = null;
+        }
+      }
+
+      function positionAnonymousContextMenu(targetRect) {
+        if (!waContextLayer || !waContextOverlay) {
+          return;
+        }
+
+        const margin = 12;
+        const layerRect = waContextLayer.getBoundingClientRect();
+        let left = targetRect.right - layerRect.width;
+        left = Math.max(margin, Math.min(left, window.innerWidth - layerRect.width - margin));
+
+        const minTop = 18;
+        const maxTop = window.innerHeight - layerRect.height - 18;
+        let top = targetRect.top - 66;
+        if (top < minTop) {
+          top = targetRect.bottom + 10;
+        }
+        top = Math.max(minTop, Math.min(top, Math.max(minTop, maxTop)));
+
+        waContextLayer.style.left = `${left}px`;
+        waContextLayer.style.top = `${top}px`;
+      }
+
+      function openAnonymousContextMenu(item) {
+        if (!waContextOverlay || !waContextBubble || !waContextLayer || !item) {
+          return;
+        }
+
+        const routeText = item.querySelector(".anonymous-item-route")?.textContent || "anonim";
+        const timeText = item.querySelector("time")?.textContent || "";
+        const messageText = item.querySelector(".anonymous-item-message")?.textContent || "";
+
+        waContextBubble.innerHTML = "";
+
+        const message = document.createElement("p");
+        message.className = "wa-context-message";
+        message.textContent = messageText;
+
+        const meta = document.createElement("div");
+        meta.className = "wa-context-meta";
+
+        const metaRoute = document.createElement("span");
+        metaRoute.className = "wa-context-route";
+        metaRoute.textContent = routeText;
+
+        const metaTime = document.createElement("span");
+        metaTime.className = "wa-context-time";
+        metaTime.textContent = timeText;
+
+        const checks = document.createElement("span");
+        checks.className = "wa-context-check";
+        checks.textContent = "✓✓";
+
+        meta.append(metaRoute, metaTime, checks);
+        waContextBubble.append(message, meta);
+
+        if (activeAnonymousItem && activeAnonymousItem !== item) {
+          activeAnonymousItem.classList.remove("is-context-target");
+          activeAnonymousItem.setAttribute("aria-expanded", "false");
+        }
+
+        activeAnonymousItem = item;
+        activeAnonymousItem.classList.add("is-context-target");
+        activeAnonymousItem.setAttribute("aria-expanded", "true");
+
+        waContextOverlay.classList.add("is-open");
+        waContextOverlay.setAttribute("aria-hidden", "false");
+        document.body.classList.add("wa-context-open");
+
+        requestAnimationFrame(() => {
+          positionAnonymousContextMenu(item.getBoundingClientRect());
+        });
+      }
+
+      if (anonymousFeed) {
+        anonymousFeed.addEventListener("click", (event) => {
+          const item = event.target.closest(".anonymous-item");
+          if (!item || !anonymousFeed.contains(item)) {
+            return;
+          }
+
+          openAnonymousContextMenu(item);
+        });
+
+        anonymousFeed.addEventListener("keydown", (event) => {
+          if (event.key !== "Enter" && event.key !== " ") {
+            return;
+          }
+
+          const item = event.target.closest(".anonymous-item");
+          if (!item || !anonymousFeed.contains(item)) {
+            return;
+          }
+
+          event.preventDefault();
+          openAnonymousContextMenu(item);
+        });
+      }
+
+      if (waContextOverlay) {
+        waContextOverlay.addEventListener("click", (event) => {
+          const closeTarget = event.target.closest("[data-wa-close]");
+
+          if (closeTarget) {
+            closeAnonymousContextMenu();
+          }
+        });
+      }
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeAnonymousContextMenu();
+        }
+      });
+
+      window.addEventListener("resize", closeAnonymousContextMenu);
+      window.addEventListener("scroll", closeAnonymousContextMenu, { passive: true });
 
       function render(list) {
         track.innerHTML = "";
@@ -3052,6 +3444,10 @@
         messages.forEach((message) => {
           const item = document.createElement("article");
           item.className = "anonymous-item";
+          item.tabIndex = 0;
+          item.setAttribute("role", "button");
+          item.setAttribute("aria-haspopup", "dialog");
+          item.setAttribute("aria-expanded", "false");
 
           const top = document.createElement("div");
           top.className = "anonymous-item-top";
@@ -3155,7 +3551,7 @@
             startAnonymousSync();
             if (anonymousStatus) {
               anonymousStatus.className = "anonymous-status success";
-              anonymousStatus.textContent = "Live message board ✨";
+              anonymousStatus.textContent = "";
             }
             return;
           } catch {
