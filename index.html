@@ -1394,10 +1394,26 @@
       }
       .anonymous-feed.is-stacked {
         gap: 0;
+        display: block;
+        position: relative;
+      }
+      .anonymous-feed.is-stacked::after {
+        content: "";
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        bottom: -4px;
+        height: 12px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, rgba(236, 72, 153, 0.26), rgba(147, 51, 234, 0.22));
+        filter: blur(8px);
+        opacity: 0.55;
+        pointer-events: none;
+        z-index: 0;
       }
       .anonymous-feed.is-stacked .anonymous-item {
-        margin-top: -58px;
-        transform: translateX(var(--stack-shift, 0px));
+        margin-top: calc(var(--stack-overlap, 0px) * -1);
+        transform: translateY(var(--stack-offset, 0px)) scale(var(--stack-scale, 1));
       }
       .anonymous-feed.is-stacked .anonymous-item:first-of-type {
         margin-top: 0;
@@ -1409,6 +1425,14 @@
         padding: 10px 12px;
         box-shadow: 0 6px 20px rgba(12, 7, 30, 0.45);
         position: relative;
+        z-index: 1;
+      }
+      .anonymous-item.is-preview {
+        padding: 8px 12px;
+        background: rgba(12, 8, 28, 0.78);
+        border-color: rgba(236, 72, 153, 0.18);
+        opacity: 0.88;
+        backdrop-filter: blur(3px);
       }
       .anonymous-item-top {
         display: flex;
@@ -1419,9 +1443,18 @@
         color: var(--muted);
         font-size: 12px;
         font-weight: 700;
+        white-space: nowrap;
       }
       .anonymous-item-route {
         color: rgba(226, 232, 240, 0.9);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 72%;
+      }
+      .anonymous-item.is-preview .anonymous-item-top {
+        margin-bottom: 0;
+        font-size: 11px;
       }
       .anonymous-item-message {
         margin: 0;
@@ -1430,6 +1463,9 @@
         line-height: 1.55;
         white-space: pre-wrap;
         word-break: break-word;
+      }
+      .anonymous-item.is-preview .anonymous-item-message {
+        display: none;
       }
       .anonymous-empty {
         margin: 0;
@@ -2752,6 +2788,7 @@
       const anonymousStorageKey = "rgclass_anonymous_messages_v1";
       const maxAnonymousMessages = 50;
       const anonymousStackThreshold = 5;
+      const anonymousStackVisibleCount = 5;
       const anonymousCooldownMs = 5 * 60 * 1000;
       const anonymousCooldownKey = "rgclass_anonymous_last_sent_at_v1";
       const anonymousCloudConfig = {
@@ -2910,7 +2947,6 @@
         }
 
         anonymousFeed.innerHTML = "";
-        anonymousFeed.classList.remove("is-stacked");
 
         if (!messages.length) {
           const empty = document.createElement("p");
@@ -2923,21 +2959,12 @@
         const shouldUseStack =
           messages.length > anonymousStackThreshold && !anonymousFeedExpanded;
         const messagesToRender = shouldUseStack
-          ? messages.slice(0, anonymousStackThreshold)
+          ? messages.slice(0, anonymousStackVisibleCount)
           : messages;
 
-        if (shouldUseStack) {
-          anonymousFeed.classList.add("is-stacked");
-        }
-
-        messagesToRender.forEach((message, index) => {
+        messagesToRender.forEach((message) => {
           const item = document.createElement("article");
           item.className = "anonymous-item";
-
-          if (shouldUseStack) {
-            item.style.zIndex = String(messagesToRender.length - index);
-            item.style.setProperty("--stack-shift", `${index * 2}px`);
-          }
 
           const top = document.createElement("div");
           top.className = "anonymous-item-top";
@@ -2959,7 +2986,7 @@
         });
 
         if (messages.length > anonymousStackThreshold) {
-          const hiddenCount = messages.length - anonymousStackThreshold;
+          const hiddenCount = messages.length - messagesToRender.length;
           const control = document.createElement("div");
           control.className = "anonymous-stack-control";
 
@@ -2967,12 +2994,12 @@
           info.className = "anonymous-stack-info";
           info.textContent = anonymousFeedExpanded
             ? `Showing all ${messages.length} messages`
-            : `${hiddenCount} older message${hiddenCount > 1 ? "s" : ""} are stacked`;
+            : `${hiddenCount} more message${hiddenCount > 1 ? "s" : ""}`;
 
           const toggleButton = document.createElement("button");
           toggleButton.type = "button";
           toggleButton.className = "anonymous-stack-btn";
-          toggleButton.textContent = anonymousFeedExpanded ? "Collapse Stack" : "Show All";
+          toggleButton.textContent = anonymousFeedExpanded ? "Show Less" : "Show All";
           toggleButton.addEventListener("click", () => {
             anonymousFeedExpanded = !anonymousFeedExpanded;
             renderAnonymousMessages(anonymousMessages);
