@@ -1377,6 +1377,54 @@
       .anonymous-status.error {
         color: #fda4af;
       }
+      .anonymous-board-title {
+        margin: 2px 0 12px;
+        font-size: 18px;
+        font-weight: 800;
+        font-family: "Space Grotesk", sans-serif;
+        color: var(--text);
+      }
+      .anonymous-feed {
+        display: grid;
+        gap: 10px;
+      }
+      .anonymous-item {
+        border: 1px solid rgba(236, 72, 153, 0.24);
+        background: rgba(10, 6, 24, 0.72);
+        border-radius: 12px;
+        padding: 10px 12px;
+      }
+      .anonymous-item-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 6px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .anonymous-item-route {
+        color: rgba(226, 232, 240, 0.9);
+      }
+      .anonymous-item-message {
+        margin: 0;
+        color: var(--text);
+        font-size: 14px;
+        line-height: 1.55;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .anonymous-empty {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 600;
+        border: 1px dashed rgba(236, 72, 153, 0.3);
+        border-radius: 12px;
+        background: rgba(15, 10, 30, 0.45);
+        padding: 12px;
+      }
       .tools-links a:hover {
         color: #fff;
         border-bottom-color: rgba(236, 72, 153, 0.7);
@@ -2550,8 +2598,6 @@
           <form
             class="anonymous-form"
             id="anonymousForm"
-            action="https://script.google.com/macros/s/AKfycbx4LHGX3gmFbykdNQ2Qp8SrgiUHI8U4V4clVG1TuJYAImpZr4nfxPtOycvJPQGdWG9V/exec"
-            method="POST"
           >
             <div class="anonymous-row">
               <label class="anonymous-label" for="anonSender">From</label>
@@ -2593,6 +2639,11 @@
             </button>
             <div class="anonymous-status" id="anonymousStatus" aria-live="polite"></div>
           </form>
+        </div>
+
+        <div class="card" style="grid-column: span 12">
+          <h4 class="anonymous-board-title">Latest Anonymous Messages</h4>
+          <div class="anonymous-feed" id="anonymousFeed" aria-live="polite"></div>
         </div>
       </div>
     </section>
@@ -2652,6 +2703,9 @@
       const anonymousForm = document.getElementById("anonymousForm");
       const anonymousSubmit = document.getElementById("anonymousSubmit");
       const anonymousStatus = document.getElementById("anonymousStatus");
+      const anonymousFeed = document.getElementById("anonymousFeed");
+      const anonymousStorageKey = "rgclass_anonymous_messages_v1";
+      const maxAnonymousMessages = 50;
 
       function render(list) {
         track.innerHTML = "";
@@ -2679,27 +2733,108 @@
 
       render(students);
 
+      function loadAnonymousMessages() {
+        try {
+          const raw = localStorage.getItem(anonymousStorageKey);
+          if (!raw) {
+            return [];
+          }
+
+          const parsed = JSON.parse(raw);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function saveAnonymousMessages(messages) {
+        localStorage.setItem(anonymousStorageKey, JSON.stringify(messages));
+      }
+
+      function formatAnonymousTime(timestamp) {
+        return new Intl.DateTimeFormat("id-ID", {
+          dateStyle: "medium",
+          timeStyle: "short"
+        }).format(new Date(timestamp));
+      }
+
+      function renderAnonymousMessages(messages) {
+        if (!anonymousFeed) {
+          return;
+        }
+
+        anonymousFeed.innerHTML = "";
+
+        if (!messages.length) {
+          const empty = document.createElement("p");
+          empty.className = "anonymous-empty";
+          empty.textContent = "No messages yet. Send the first one now ✨";
+          anonymousFeed.appendChild(empty);
+          return;
+        }
+
+        messages.forEach((message) => {
+          const item = document.createElement("article");
+          item.className = "anonymous-item";
+
+          const top = document.createElement("div");
+          top.className = "anonymous-item-top";
+
+          const route = document.createElement("span");
+          route.className = "anonymous-item-route";
+          route.textContent = `${message.dari} → ${message.kepada}`;
+
+          const time = document.createElement("time");
+          time.textContent = formatAnonymousTime(message.createdAt);
+
+          const text = document.createElement("p");
+          text.className = "anonymous-item-message";
+          text.textContent = message.pesan;
+
+          top.append(route, time);
+          item.append(top, text);
+          anonymousFeed.appendChild(item);
+        });
+      }
+
+      let anonymousMessages = loadAnonymousMessages();
+      renderAnonymousMessages(anonymousMessages);
+
       if (anonymousForm && anonymousSubmit && anonymousStatus) {
-        anonymousForm.addEventListener("submit", async (event) => {
+        anonymousForm.addEventListener("submit", (event) => {
           event.preventDefault();
           anonymousStatus.className = "anonymous-status";
-          anonymousStatus.textContent = "Sending message...";
+          anonymousStatus.textContent = "Saving message...";
           anonymousSubmit.disabled = true;
 
           try {
-            const formData = new FormData(anonymousForm);
-            await fetch(anonymousForm.action, {
-              method: "POST",
-              body: formData,
-              mode: "no-cors"
-            });
+            const sender = (document.getElementById("anonSender")?.value || "").trim();
+            const receiver = (document.getElementById("anonReceiver")?.value || "").trim();
+            const text = (document.getElementById("anonMessage")?.value || "").trim();
+
+            if (!sender || !receiver || !text) {
+              anonymousStatus.className = "anonymous-status error";
+              anonymousStatus.textContent = "Please complete all fields before sending.";
+              return;
+            }
+
+            const message = {
+              dari: sender,
+              kepada: receiver,
+              pesan: text,
+              createdAt: Date.now()
+            };
+
+            anonymousMessages = [message, ...anonymousMessages].slice(0, maxAnonymousMessages);
+            saveAnonymousMessages(anonymousMessages);
+            renderAnonymousMessages(anonymousMessages);
 
             anonymousForm.reset();
             anonymousStatus.className = "anonymous-status success";
-            anonymousStatus.textContent = "Anonymous message sent successfully ✨";
+            anonymousStatus.textContent = "Message sent and displayed successfully ✨";
           } catch {
             anonymousStatus.className = "anonymous-status error";
-            anonymousStatus.textContent = "Failed to send message. Please try again.";
+            anonymousStatus.textContent = "Failed to save message. Please try again.";
           } finally {
             anonymousSubmit.disabled = false;
           }
