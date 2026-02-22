@@ -2752,6 +2752,8 @@
       const anonymousStorageKey = "rgclass_anonymous_messages_v1";
       const maxAnonymousMessages = 50;
       const anonymousStackThreshold = 5;
+      const anonymousCooldownMs = 5 * 60 * 1000;
+      const anonymousCooldownKey = "rgclass_anonymous_last_sent_at_v1";
       const anonymousCloudConfig = {
         supabaseUrl: "https://yhhlxxiupykjqrscspmm.supabase.co",
         supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InloaGx4eGl1cHlranFyc2NzcG1tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3Mzc1ODgsImV4cCI6MjA4NzMxMzU4OH0.NZSjtkaLxH-lCCFjLURhJLnBf5llJW8zbP5YI3ATD3g",
@@ -2801,6 +2803,35 @@
 
       function saveAnonymousMessages(messages) {
         localStorage.setItem(anonymousStorageKey, JSON.stringify(messages));
+      }
+
+      function getAnonymousLastSentAt() {
+        const raw = localStorage.getItem(anonymousCooldownKey);
+        const timestamp = Number(raw);
+        return Number.isFinite(timestamp) ? timestamp : 0;
+      }
+
+      function setAnonymousLastSentAt(timestamp) {
+        localStorage.setItem(anonymousCooldownKey, String(timestamp));
+      }
+
+      function getAnonymousCooldownRemainingMs() {
+        const lastSentAt = getAnonymousLastSentAt();
+        if (!lastSentAt) {
+          return 0;
+        }
+
+        const remaining = lastSentAt + anonymousCooldownMs - Date.now();
+        return remaining > 0 ? remaining : 0;
+      }
+
+      function formatAnonymousCooldown(remainingMs) {
+        const totalSeconds = Math.ceil(remainingMs / 1000);
+        const minutes = Math.floor(totalSeconds / 60)
+          .toString()
+          .padStart(2, "0");
+        const seconds = (totalSeconds % 60).toString().padStart(2, "0");
+        return `${minutes}:${seconds}`;
       }
 
       function isAnonymousCloudConfigured() {
@@ -2955,6 +2986,53 @@
       let anonymousMessages = [];
       let anonymousSyncTimer = null;
       let anonymousFeedExpanded = false;
+      let anonymousCooldownTimer = null;
+
+      function applyAnonymousCooldownState() {
+        if (!anonymousSubmit || !anonymousStatus) {
+          return;
+        }
+
+        const remainingMs = getAnonymousCooldownRemainingMs();
+
+        if (remainingMs <= 0) {
+          if (anonymousCooldownTimer) {
+            clearInterval(anonymousCooldownTimer);
+            anonymousCooldownTimer = null;
+          }
+          anonymousSubmit.disabled = false;
+          anonymousSubmit.textContent = "Send";
+          return;
+        }
+
+        const updateCooldownUI = () => {
+          const remaining = getAnonymousCooldownRemainingMs();
+          if (remaining <= 0) {
+            if (anonymousCooldownTimer) {
+              clearInterval(anonymousCooldownTimer);
+              anonymousCooldownTimer = null;
+            }
+            anonymousSubmit.disabled = false;
+            anonymousSubmit.textContent = "Send";
+            anonymousStatus.className = "anonymous-status success";
+            anonymousStatus.textContent = "You can send a new message now ✨";
+            return;
+          }
+
+          anonymousSubmit.disabled = true;
+          anonymousSubmit.textContent = `Wait ${formatAnonymousCooldown(remaining)}`;
+          anonymousStatus.className = "anonymous-status info";
+          anonymousStatus.textContent = `Please wait ${formatAnonymousCooldown(remaining)} before sending again.`;
+        };
+
+        updateCooldownUI();
+
+        if (anonymousCooldownTimer) {
+          clearInterval(anonymousCooldownTimer);
+        }
+
+        anonymousCooldownTimer = setInterval(updateCooldownUI, 1000);
+      }
 
       async function refreshAnonymousMessagesFromCloud(silent = false) {
         const cloudMessages = await loadAnonymousMessagesFromCloud();
@@ -3007,10 +3085,18 @@
       }
 
       initializeAnonymousMessages();
+      applyAnonymousCooldownState();
 
       if (anonymousForm && anonymousSubmit && anonymousStatus) {
         anonymousForm.addEventListener("submit", async (event) => {
           event.preventDefault();
+
+          const cooldownRemaining = getAnonymousCooldownRemainingMs();
+          if (cooldownRemaining > 0) {
+            applyAnonymousCooldownState();
+            return;
+          }
+
           anonymousStatus.className = "anonymous-status";
           anonymousStatus.textContent = "Saving message...";
           anonymousSubmit.disabled = true;
@@ -3044,6 +3130,8 @@
             renderAnonymousMessages(anonymousMessages);
 
             anonymousForm.reset();
+            setAnonymousLastSentAt(Date.now());
+            applyAnonymousCooldownState();
             anonymousStatus.className = "anonymous-status success";
             anonymousStatus.textContent = isAnonymousCloudConfigured()
               ? "message sent, thank you ✨"
@@ -3052,7 +3140,10 @@
             anonymousStatus.className = "anonymous-status error";
             anonymousStatus.textContent = "Failed to save message. Please try again.";
           } finally {
-            anonymousSubmit.disabled = false;
+            if (getAnonymousCooldownRemainingMs() <= 0) {
+              anonymousSubmit.disabled = false;
+              anonymousSubmit.textContent = "Send";
+            }
           }
         });
       }
