@@ -1391,11 +1391,23 @@
         display: grid;
         gap: 10px;
       }
+      .anonymous-feed.is-stacked {
+        gap: 0;
+      }
+      .anonymous-feed.is-stacked .anonymous-item {
+        margin-top: -58px;
+        transform: translateX(var(--stack-shift, 0px));
+      }
+      .anonymous-feed.is-stacked .anonymous-item:first-of-type {
+        margin-top: 0;
+      }
       .anonymous-item {
         border: 1px solid rgba(236, 72, 153, 0.24);
         background: rgba(10, 6, 24, 0.72);
         border-radius: 12px;
         padding: 10px 12px;
+        box-shadow: 0 6px 20px rgba(12, 7, 30, 0.45);
+        position: relative;
       }
       .anonymous-item-top {
         display: flex;
@@ -1427,6 +1439,35 @@
         border-radius: 12px;
         background: rgba(15, 10, 30, 0.45);
         padding: 12px;
+      }
+      .anonymous-stack-control {
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px;
+        border: 1px dashed rgba(236, 72, 153, 0.34);
+        border-radius: 12px;
+        background: rgba(15, 10, 30, 0.55);
+      }
+      .anonymous-stack-info {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .anonymous-stack-btn {
+        border: 0;
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 12px;
+        font-weight: 800;
+        color: #fff;
+        background: linear-gradient(135deg, rgba(236, 72, 153, 0.92), rgba(147, 51, 234, 0.92));
+        cursor: pointer;
+      }
+      .anonymous-stack-btn:hover {
+        filter: brightness(1.07);
       }
       .tools-links a:hover {
         color: #fff;
@@ -2709,6 +2750,7 @@
       const anonymousFeed = document.getElementById("anonymousFeed");
       const anonymousStorageKey = "rgclass_anonymous_messages_v1";
       const maxAnonymousMessages = 50;
+      const anonymousStackThreshold = 5;
       const anonymousCloudConfig = {
         supabaseUrl: "https://yhhlxxiupykjqrscspmm.supabase.co",
         supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InloaGx4eGl1cHlranFyc2NzcG1tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3Mzc1ODgsImV4cCI6MjA4NzMxMzU4OH0.NZSjtkaLxH-lCCFjLURhJLnBf5llJW8zbP5YI3ATD3g",
@@ -2836,6 +2878,7 @@
         }
 
         anonymousFeed.innerHTML = "";
+        anonymousFeed.classList.remove("is-stacked");
 
         if (!messages.length) {
           const empty = document.createElement("p");
@@ -2845,9 +2888,24 @@
           return;
         }
 
-        messages.forEach((message) => {
+        const shouldUseStack =
+          messages.length > anonymousStackThreshold && !anonymousFeedExpanded;
+        const messagesToRender = shouldUseStack
+          ? messages.slice(0, anonymousStackThreshold)
+          : messages;
+
+        if (shouldUseStack) {
+          anonymousFeed.classList.add("is-stacked");
+        }
+
+        messagesToRender.forEach((message, index) => {
           const item = document.createElement("article");
           item.className = "anonymous-item";
+
+          if (shouldUseStack) {
+            item.style.zIndex = String(messagesToRender.length - index);
+            item.style.setProperty("--stack-shift", `${index * 2}px`);
+          }
 
           const top = document.createElement("div");
           top.className = "anonymous-item-top";
@@ -2867,10 +2925,35 @@
           item.append(top, text);
           anonymousFeed.appendChild(item);
         });
+
+        if (messages.length > anonymousStackThreshold) {
+          const hiddenCount = messages.length - anonymousStackThreshold;
+          const control = document.createElement("div");
+          control.className = "anonymous-stack-control";
+
+          const info = document.createElement("span");
+          info.className = "anonymous-stack-info";
+          info.textContent = anonymousFeedExpanded
+            ? `Showing all ${messages.length} messages`
+            : `${hiddenCount} older message${hiddenCount > 1 ? "s" : ""} are stacked`;
+
+          const toggleButton = document.createElement("button");
+          toggleButton.type = "button";
+          toggleButton.className = "anonymous-stack-btn";
+          toggleButton.textContent = anonymousFeedExpanded ? "Collapse Stack" : "Show All";
+          toggleButton.addEventListener("click", () => {
+            anonymousFeedExpanded = !anonymousFeedExpanded;
+            renderAnonymousMessages(anonymousMessages);
+          });
+
+          control.append(info, toggleButton);
+          anonymousFeed.appendChild(control);
+        }
       }
 
       let anonymousMessages = [];
       let anonymousSyncTimer = null;
+      let anonymousFeedExpanded = false;
 
       async function refreshAnonymousMessagesFromCloud(silent = false) {
         const cloudMessages = await loadAnonymousMessagesFromCloud();
@@ -2962,7 +3045,7 @@
             anonymousForm.reset();
             anonymousStatus.className = "anonymous-status success";
             anonymousStatus.textContent = isAnonymousCloudConfigured()
-              ? "Message sent and visible to all visitors ✨"
+              ? "message sent, thank you ✨"
               : "Message sent in local mode ✨";
           } catch {
             anonymousStatus.className = "anonymous-status error";
