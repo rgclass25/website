@@ -1377,6 +1377,9 @@
       .anonymous-status.error {
         color: #fda4af;
       }
+      .anonymous-status.info {
+        color: #67e8f9;
+      }
       .anonymous-board-title {
         margin: 2px 0 12px;
         font-size: 18px;
@@ -2706,6 +2709,12 @@
       const anonymousFeed = document.getElementById("anonymousFeed");
       const anonymousStorageKey = "rgclass_anonymous_messages_v1";
       const maxAnonymousMessages = 50;
+      const anonymousCloudConfig = {
+        supabaseUrl: "https://yhhlxxiupykjqrscspmm.supabase.co",
+        supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InloaGx4eGl1cHlranFyc2NzcG1tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3Mzc1ODgsImV4cCI6MjA4NzMxMzU4OH0.NZSjtkaLxH-lCCFjLURhJLnBf5llJW8zbP5YI3ATD3g",
+        tableName: "anonymous_messages"
+      };
+      const anonymousSyncIntervalMs = 15000;
 
       function render(list) {
         track.innerHTML = "";
@@ -2749,6 +2758,69 @@
 
       function saveAnonymousMessages(messages) {
         localStorage.setItem(anonymousStorageKey, JSON.stringify(messages));
+      }
+
+      function isAnonymousCloudConfigured() {
+        return (
+          anonymousCloudConfig.supabaseUrl.startsWith("https://") &&
+          !anonymousCloudConfig.supabaseUrl.includes("YOUR_PROJECT_ID") &&
+          anonymousCloudConfig.supabaseAnonKey.length > 20 &&
+          !anonymousCloudConfig.supabaseAnonKey.includes("YOUR_SUPABASE_ANON_KEY") &&
+          anonymousCloudConfig.tableName.trim().length > 0
+        );
+      }
+
+      function normalizeAnonymousMessage(message) {
+        return {
+          dari: message.dari || "Anonymous",
+          kepada: message.kepada || "Unknown",
+          pesan: message.pesan || "",
+          createdAt: message.createdAt || message.created_at || Date.now()
+        };
+      }
+
+      async function loadAnonymousMessagesFromCloud() {
+        const endpoint = `${anonymousCloudConfig.supabaseUrl}/rest/v1/${encodeURIComponent(anonymousCloudConfig.tableName)}?select=dari,kepada,pesan,created_at&order=created_at.desc&limit=${maxAnonymousMessages}`;
+        const response = await fetch(endpoint, {
+          method: "GET",
+          headers: {
+            apikey: anonymousCloudConfig.supabaseAnonKey,
+            Authorization: `Bearer ${anonymousCloudConfig.supabaseAnonKey}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to load cloud messages");
+        }
+
+        const rows = await response.json();
+        return Array.isArray(rows) ? rows.map(normalizeAnonymousMessage) : [];
+      }
+
+      async function saveAnonymousMessageToCloud(message) {
+        const endpoint = `${anonymousCloudConfig.supabaseUrl}/rest/v1/${encodeURIComponent(anonymousCloudConfig.tableName)}`;
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: anonymousCloudConfig.supabaseAnonKey,
+            Authorization: `Bearer ${anonymousCloudConfig.supabaseAnonKey}`,
+            Prefer: "return=representation"
+          },
+          body: JSON.stringify({
+            dari: message.dari,
+            kepada: message.kepada,
+            pesan: message.pesan
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to save cloud message");
+        }
+
+        const rows = await response.json();
+        const saved = Array.isArray(rows) && rows.length ? rows[0] : message;
+        return normalizeAnonymousMessage(saved);
       }
 
       function formatAnonymousTime(timestamp) {
@@ -2797,11 +2869,63 @@
         });
       }
 
-      let anonymousMessages = loadAnonymousMessages();
-      renderAnonymousMessages(anonymousMessages);
+      let anonymousMessages = [];
+      let anonymousSyncTimer = null;
+
+      async function refreshAnonymousMessagesFromCloud(silent = false) {
+        const cloudMessages = await loadAnonymousMessagesFromCloud();
+        anonymousMessages = cloudMessages;
+        renderAnonymousMessages(anonymousMessages);
+
+        if (!silent && anonymousStatus) {
+          anonymousStatus.className = "anonymous-status success";
+          anonymousStatus.textContent = "Messages are synced for all visitors.";
+        }
+      }
+
+      function startAnonymousSync() {
+        if (!isAnonymousCloudConfigured()) {
+          return;
+        }
+
+        if (anonymousSyncTimer) {
+          clearInterval(anonymousSyncTimer);
+        }
+
+        anonymousSyncTimer = setInterval(() => {
+          refreshAnonymousMessagesFromCloud(true).catch(() => {});
+        }, anonymousSyncIntervalMs);
+      }
+
+      async function initializeAnonymousMessages() {
+        if (isAnonymousCloudConfigured()) {
+          try {
+            await refreshAnonymousMessagesFromCloud(true);
+            startAnonymousSync();
+            if (anonymousStatus) {
+              anonymousStatus.className = "anonymous-status success";
+              anonymousStatus.textContent = "Live message board is active ✨";
+            }
+            return;
+          } catch {
+            if (anonymousStatus) {
+              anonymousStatus.className = "anonymous-status error";
+              anonymousStatus.textContent = "Cloud sync failed. Using local mode.";
+            }
+          }
+        } else if (anonymousStatus) {
+          anonymousStatus.className = "anonymous-status info";
+          anonymousStatus.textContent = "Cloud mode is not configured yet. Messages are local only.";
+        }
+
+        anonymousMessages = loadAnonymousMessages();
+        renderAnonymousMessages(anonymousMessages);
+      }
+
+      initializeAnonymousMessages();
 
       if (anonymousForm && anonymousSubmit && anonymousStatus) {
-        anonymousForm.addEventListener("submit", (event) => {
+        anonymousForm.addEventListener("submit", async (event) => {
           event.preventDefault();
           anonymousStatus.className = "anonymous-status";
           anonymousStatus.textContent = "Saving message...";
@@ -2825,13 +2949,21 @@
               createdAt: Date.now()
             };
 
-            anonymousMessages = [message, ...anonymousMessages].slice(0, maxAnonymousMessages);
-            saveAnonymousMessages(anonymousMessages);
+            if (isAnonymousCloudConfigured()) {
+              const savedMessage = await saveAnonymousMessageToCloud(message);
+              anonymousMessages = [savedMessage, ...anonymousMessages].slice(0, maxAnonymousMessages);
+            } else {
+              anonymousMessages = [message, ...anonymousMessages].slice(0, maxAnonymousMessages);
+              saveAnonymousMessages(anonymousMessages);
+            }
+
             renderAnonymousMessages(anonymousMessages);
 
             anonymousForm.reset();
             anonymousStatus.className = "anonymous-status success";
-            anonymousStatus.textContent = "Message sent and displayed successfully ✨";
+            anonymousStatus.textContent = isAnonymousCloudConfigured()
+              ? "Message sent and visible to all visitors ✨"
+              : "Message sent in local mode ✨";
           } catch {
             anonymousStatus.className = "anonymous-status error";
             anonymousStatus.textContent = "Failed to save message. Please try again.";
