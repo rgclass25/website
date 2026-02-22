@@ -1657,9 +1657,9 @@
       .wa-context-reactions {
         display: flex;
         align-items: center;
-        gap: 14px;
-        min-height: 58px;
-        padding: 10px 14px;
+        gap: 9px;
+        min-height: 46px;
+        padding: 6px 10px;
         border-radius: 999px;
         background: rgba(32, 35, 39, 0.95);
         border: 1px solid rgba(255, 255, 255, 0.09);
@@ -1669,19 +1669,19 @@
         border: 0;
         background: transparent;
         padding: 0;
-        font-size: 33px;
+        font-size: 25px;
         line-height: 1;
         cursor: pointer;
       }
       .wa-reaction-plus {
         margin-left: auto;
         border: 0;
-        width: 42px;
-        height: 42px;
+        width: 30px;
+        height: 30px;
         border-radius: 999px;
         color: rgba(240, 245, 252, 0.92);
         background: rgba(98, 104, 112, 0.4);
-        font-size: 32px;
+        font-size: 23px;
         line-height: 1;
         cursor: pointer;
       }
@@ -2719,9 +2719,9 @@
             <h3>Member</h3>
             <p>Our information member</p>
             <div class="kpi">
-              <div class="pill"><strong>41 </strong><span> Students</span></div>
-              <div class="pill"><strong>24 </strong><span> Boy</span></div>
-              <div class="pill"><strong>17 </strong><span> Girl</span></div>
+              <div class="pill" id="studentsPill" role="button" tabindex="0" aria-label="Go to Member Class photo"><strong>41 </strong><span> Students</span></div>
+              <div class="pill" id="boysPill" role="button" tabindex="0" aria-label="Go to Boy photo"><strong>24 </strong><span> Boy</span></div>
+              <div class="pill" id="girlsPill" role="button" tabindex="0" aria-label="Go to Girl photo"><strong>17 </strong><span> Girl</span></div>
             </div>
           </div>
         </div>
@@ -2861,52 +2861,52 @@
           </thead>
           <tbody>
             <tr>
-              <td>Monday</td>
-              <td>Agama Islam </td>
-              <td>12:00 - 13:40</td>
-              <td>4.4-1</td>
+              <td>Senin</td>
+              <td>Pemrograman</td>
+              <td>10:50 - 12:30</td>
+              <td>R.4.4-4</td>
             </tr>
             <tr>
               <td></td>
-              <td>Bahasa Indonesia</td>
-              <td>13:40 - 15:20</td>
-              <td>4.4-1</td>
+              <td>Bahasa Inggris Bisnis</td>
+              <td>12:30 - 14:10</td>
+              <td>R.4.4-4</td>
             </tr>
             <tr>
-              <td>Wednesday</td>
-              <td>Konsep Sisfor</td>
+              <td>Rabu</td>
+              <td>Statistika</td>
               <td>07:00 - 09:30</td>
-              <td>4.4-1</td>
+              <td>R.4.4-4</td>
             </tr>
             <tr>
+              <td></td>
+              <td>Sistem Informasi Manajemen</td>
+              <td>09:30 - 12:00</td>
+              <td>R.4.4-4</td>
+            </tr>
+            <tr>
+              <td>Kamis</td>
+              <td>Jaringan Komputer</td>
+              <td>07:00 - 09:30</td>
+              <td>R.4.4-4</td>
+            </tr>
+             <tr>
+              <td></td>
+              <td>Kewarganegaraan</td>
+              <td>10:20 - 12:00</td>
+              <td>R.4.4-4</td>
+            </tr>
+            <tr>
+              <td>Jumat</td>
+              <td>Manajemen Proses Bisnis</td>
+              <td>07:30 - 09:10</td>
+              <td>R.4.4-4</td>
+            </tr>
+             <tr>
               <td></td>
               <td>Algoritma</td>
-              <td>09:30 - 12:00</td>
-              <td>4.4-1</td>
-            </tr>
-            <tr>
-              <td>Thursday</td>
-              <td>Matematika</td>
-              <td>08:40 - 10:20</td>
-              <td>4.4-1</td>
-            </tr>
-             <tr>
-              <td></td>
-              <td>Pancasila</td>
-              <td>10:20 - 12:00</td>
-              <td>4.4-1</td>
-            </tr>
-            <tr>
-              <td>Friday</td>
-              <td>Pemrograman</td>
-              <td>07:30 - 09:10</td>
-              <td>4.4-4</td>
-            </tr>
-             <tr>
-              <td></td>
-              <td>Bahasa Inggris</td>
               <td>09:10 - 10:50</td>
-              <td>4.4-4</td>
+              <td>R.4.4-4</td>
             </tr>
           </tbody>
         </table>
@@ -2934,15 +2934,15 @@
             <img src="public/allfm.jpeg" alt="Gallery 2" />
             <div class="cap">All First Meet</div>
           </div>
-          <div class="tile">
+          <div class="tile" id="memberClassPhoto">
             <img src="public/allmembers.jpeg" alt="Gallery 3" />
             <div class="cap">Member Class</div>
           </div>
-          <div class="tile">
+          <div class="tile" id="boyPhoto">
             <img src="public/boy.jpeg" alt="Gallery 4" />
             <div class="cap">Boy</div>
           </div>
-          <div class="tile">
+          <div class="tile" id="girlPhoto">
             <img src="public/girl.jpeg" alt="Gallery 5" />
             <div class="cap">Girl</div>
           </div>
@@ -3132,6 +3132,12 @@
       const track = document.getElementById("track");
       const searchName = document.getElementById("searchName");
       const countLabel = document.getElementById("countLabel");
+      const studentsPill = document.getElementById("studentsPill");
+      const boysPill = document.getElementById("boysPill");
+      const girlsPill = document.getElementById("girlsPill");
+      const memberClassPhoto = document.getElementById("memberClassPhoto");
+      const boyPhoto = document.getElementById("boyPhoto");
+      const girlPhoto = document.getElementById("girlPhoto");
       const anonymousForm = document.getElementById("anonymousForm");
       const anonymousSubmit = document.getElementById("anonymousSubmit");
       const anonymousStatus = document.getElementById("anonymousStatus");
@@ -3308,6 +3314,28 @@
       }
 
       render(students);
+
+      const bindPillScroll = (pill, target) => {
+        if (!pill || !target) {
+          return;
+        }
+
+        const goToTarget = () => {
+          target.scrollIntoView({ behavior: "smooth", block: "center" });
+        };
+
+        pill.addEventListener("click", goToTarget);
+        pill.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            goToTarget();
+          }
+        });
+      };
+
+      bindPillScroll(studentsPill, memberClassPhoto);
+      bindPillScroll(boysPill, boyPhoto);
+      bindPillScroll(girlsPill, girlPhoto);
 
       function loadAnonymousMessages() {
         try {
