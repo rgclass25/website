@@ -1650,16 +1650,16 @@
       }
       .wa-context-layer {
         position: absolute;
-        width: min(360px, calc(100vw - 24px));
+        width: min(336px, calc(100vw - 24px));
         display: grid;
-        gap: 10px;
+        gap: 8px;
       }
       .wa-context-reactions {
         display: flex;
         align-items: center;
-        gap: 9px;
-        min-height: 46px;
-        padding: 6px 10px;
+        gap: 8px;
+        min-height: 42px;
+        padding: 5px 9px;
         border-radius: 999px;
         background: rgba(32, 35, 39, 0.95);
         border: 1px solid rgba(255, 255, 255, 0.09);
@@ -1669,19 +1669,19 @@
         border: 0;
         background: transparent;
         padding: 0;
-        font-size: 25px;
+        font-size: 23px;
         line-height: 1;
         cursor: pointer;
       }
       .wa-reaction-plus {
         margin-left: auto;
         border: 0;
-        width: 30px;
-        height: 30px;
+        width: 28px;
+        height: 28px;
         border-radius: 999px;
         color: rgba(240, 245, 252, 0.92);
         background: rgba(98, 104, 112, 0.4);
-        font-size: 23px;
+        font-size: 21px;
         line-height: 1;
         cursor: pointer;
       }
@@ -1689,15 +1689,15 @@
         margin-left: auto;
         margin-right: auto;
         width: fit-content;
-        max-width: min(100%, 320px);
+        max-width: min(100%, 298px);
         background:
           linear-gradient(150deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0) 52%),
           linear-gradient(160deg, rgba(236, 72, 153, 0.2), rgba(147, 51, 234, 0.16) 46%, rgba(6, 182, 212, 0.14) 100%),
           rgba(13, 9, 30, 0.95);
         border: 1px solid rgba(236, 72, 153, 0.34);
-        border-radius: 16px 16px 4px 16px;
+        border-radius: 15px 15px 4px 15px;
         color: var(--text);
-        padding: 10px 13px 8px;
+        padding: 9px 12px 7px;
         position: relative;
         box-shadow:
           0 12px 26px rgba(0, 0, 0, 0.35),
@@ -1718,7 +1718,7 @@
       }
       .wa-context-message {
         margin: 0;
-        font-size: 15px;
+        font-size: 14px;
         line-height: 1.35;
         word-break: break-word;
       }
@@ -1728,7 +1728,7 @@
         grid-template-columns: minmax(0, 1fr) auto auto;
         align-items: end;
         column-gap: 6px;
-        font-size: 13px;
+        font-size: 12px;
         color: rgba(226, 232, 240, 0.82);
       }
       .wa-context-route {
@@ -1743,7 +1743,7 @@
       }
       .wa-context-check {
         color: #67e8f9;
-        font-size: 13px;
+        font-size: 12px;
         white-space: nowrap;
       }
       .anonymous-item.is-preview {
@@ -3146,6 +3146,7 @@
       const waContextLayer = document.getElementById("waContextLayer");
       const waContextBubble = document.getElementById("waContextBubble");
       const anonymousStorageKey = "rgclass_anonymous_messages_v1";
+      const studentAutoSlideIntervalMs = 5000;
       const maxAnonymousMessages = 50;
       const anonymousCooldownMs = 5 * 60 * 1000;
       const anonymousCooldownKey = "rgclass_anonymous_last_sent_at_v1";
@@ -3156,6 +3157,64 @@
       };
       const anonymousSyncIntervalMs = 15000;
       let activeAnonymousItem = null;
+      let studentAutoSlideTimer = null;
+
+      function getStudentSlideStep() {
+        if (!track) {
+          return 0;
+        }
+
+        const firstStudent = track.querySelector(".student");
+        if (!firstStudent) {
+          return 0;
+        }
+
+        const trackStyles = window.getComputedStyle(track);
+        const gapValue = trackStyles.columnGap || trackStyles.gap || "0";
+        const gap = Number.parseFloat(gapValue) || 0;
+        return firstStudent.getBoundingClientRect().width + gap;
+      }
+
+      function stopStudentAutoSlide() {
+        if (studentAutoSlideTimer) {
+          clearInterval(studentAutoSlideTimer);
+          studentAutoSlideTimer = null;
+        }
+      }
+
+      function slideStudentsNext() {
+        if (!track) {
+          return;
+        }
+
+        const maxScrollLeft = track.scrollWidth - track.clientWidth;
+        if (maxScrollLeft <= 0) {
+          return;
+        }
+
+        const step = getStudentSlideStep();
+        if (step <= 0) {
+          return;
+        }
+
+        const nextLeft = track.scrollLeft + step;
+        const shouldLoop = nextLeft >= maxScrollLeft - 2;
+
+        track.scrollTo({
+          left: shouldLoop ? 0 : nextLeft,
+          behavior: "smooth"
+        });
+      }
+
+      function startStudentAutoSlide() {
+        stopStudentAutoSlide();
+
+        if (!track || track.children.length < 2) {
+          return;
+        }
+
+        studentAutoSlideTimer = setInterval(slideStudentsNext, studentAutoSlideIntervalMs);
+      }
 
       function closeAnonymousContextMenu() {
         if (!waContextOverlay) {
@@ -3180,8 +3239,7 @@
 
         const margin = 12;
         const layerRect = waContextLayer.getBoundingClientRect();
-        let left = targetRect.right - layerRect.width;
-        left = Math.max(margin, Math.min(left, window.innerWidth - layerRect.width - margin));
+        const left = Math.max(margin, window.innerWidth - layerRect.width - margin);
 
         const minTop = 18;
         const maxTop = window.innerHeight - layerRect.height - 18;
@@ -3310,7 +3368,9 @@
         `;
           track.appendChild(el);
         });
+        track.scrollLeft = 0;
         countLabel.textContent = `${list.length} Students`;
+        startStudentAutoSlide();
       }
 
       render(students);
@@ -3665,23 +3725,34 @@
       let touchEndX = 0;
       
       track.addEventListener("touchstart", (e) => {
+        stopStudentAutoSlide();
         touchStartX = e.changedTouches[0].screenX;
       }, false);
       
       track.addEventListener("touchend", (e) => {
         touchEndX = e.changedTouches[0].screenX;
         handleSwipe();
+        startStudentAutoSlide();
       }, false);
+
+      track.addEventListener("mouseenter", () => {
+        stopStudentAutoSlide();
+      });
+
+      track.addEventListener("mouseleave", () => {
+        startStudentAutoSlide();
+      });
       
       function handleSwipe() {
         const swipeThreshold = 50;
         const diff = touchStartX - touchEndX;
+        const step = getStudentSlideStep() || 220;
         
         if (Math.abs(diff) > swipeThreshold) {
           if (diff > 0) {
-            track.scrollBy({ left: 220, behavior: "smooth" });
+            track.scrollBy({ left: step, behavior: "smooth" });
           } else {
-            track.scrollBy({ left: -220, behavior: "smooth" });
+            track.scrollBy({ left: -step, behavior: "smooth" });
           }
         }
       }
